@@ -32,7 +32,6 @@ def buildPyramid(width: Int, players: Int) = {
     builder.append(blockLayer(width, width, players + 1)).append(centerPath(width, width))
 }
 
-borderSpace(17, 4)
 val num = 13
 
 println(linspace(0, 12, 4))
