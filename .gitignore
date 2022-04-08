@@ -1,6 +1,10 @@
 *.class
 *.log
+*.bloop
+*.tasty
 .bsp/
 .idea/
+.vscode/
 project/target/
 target/
+null/
