@@ -7,7 +7,7 @@ class fieldSpec extends AnyWordSpec {
   val eol = System.getProperty("line.separator")
 
   "Malefiz" should {
-    " " in {
+    "return List of ints equally spaced" in {
       linspace(0, 10, 3) should be (List(0, 4, 8))
     }
 
