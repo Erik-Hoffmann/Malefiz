@@ -25,4 +25,6 @@ jobs:
         run:
           apt install curl -y
           sbt clean test jacoco
-          curl -Os https://uploader.codecov.io/latest/linux/codecov chmod +x codecov ./codecov
+          curl -s https://uploader.codecov.io/latest/linux/codecov>.codecov
+          chmod +x .codecov
+          ./.codecov
