@@ -22,4 +22,7 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
       - name: Run tests
-        run: sbt test
+        run:
+          apk add curl
+          sbt clean test jacoco
+          curl -Os https://uploader.codecov.io/latest/linux/codecov chmod +x codecov ./codecov
