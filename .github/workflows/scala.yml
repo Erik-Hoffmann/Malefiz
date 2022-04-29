@@ -21,6 +21,7 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
+      - name: Setup
         run:
           sudo -i
           apt install curl -y
