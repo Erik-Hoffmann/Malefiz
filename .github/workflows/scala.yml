@@ -23,6 +23,6 @@ jobs:
           distribution: 'temurin'
       - name: Run tests
         run:
-          apk add curl
+          apt install curl -y
           sbt clean test jacoco
           curl -Os https://uploader.codecov.io/latest/linux/codecov chmod +x codecov ./codecov
