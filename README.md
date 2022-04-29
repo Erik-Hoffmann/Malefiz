@@ -1,7 +1,10 @@
 # Malefiz
 HTWG Constance - Software Engineering - Semester 3
 
-| Branch |  Status  |
-|:------:|:--------:|
-|  Main  | ![MAIN status](https://github.com/Erik-Hoffmann/Malefiz/actions/workflows/scala.yml/badge.svg?branch=main) |
-|  Dev   | ![DEV status](https://github.com/Erik-Hoffmann/Malefiz/actions/workflows/scala.yml/badge.svg?branch=dev) |
+![MAIN status](https://github.com/Erik-Hoffmann/Malefiz/actions/workflows/scala.yml/badge.svg)
+
+[![codecov](https://codecov.io/gh/Erik-Hoffmann/Malefiz/branch/main/graph/badge.svg?token=RYPOZEZFLF)](https://codecov.io/gh/Erik-Hoffmann/Malefiz)
+
+Compile with `sbt compile`, run with `sbt run`
+
+Run jacoco with `sbt jacoco` and generate a report with `sbt jacocoReport`
