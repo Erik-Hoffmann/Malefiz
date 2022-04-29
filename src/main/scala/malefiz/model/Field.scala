@@ -35,5 +35,5 @@ case class Field(matrix: Matrix[Tokens]):
     levels.reverse.mkString("")
 
 
-  def render: String =
+  override def toString: String =
     buildPyramid(width, (width-1)/4)

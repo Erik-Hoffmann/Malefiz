@@ -14,4 +14,4 @@ import model.Matrix
   val field = new Field(players, Tokens.field)
   val controller = Controller(field)
   val tui = TUI(controller)
-  println(field.render)
+  println(tui.run())
