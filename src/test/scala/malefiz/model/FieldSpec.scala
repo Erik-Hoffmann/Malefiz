@@ -39,7 +39,7 @@ class FieldSpec extends AnyWordSpec {
       field.blockLayer(17, 4, 4) should be("                   □  □  □  □                   " + eol + "                   □     □     □                   " + eol)
     }
     "have a scalable playing field" in {
-      var player = 4;
+      var player = 4
       var width = player * 4 + 1
       field.buildPyramid(width, player) should be(
           "                         □                         " + eol +
