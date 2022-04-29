@@ -21,9 +21,11 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
+        run:
+          sudo -i
+          apt install curl -y
       - name: Run tests
         run:
-          apt install curl -y
           sbt clean test jacoco
       - name: Upload report to Codecov
         run: |
