@@ -1,70 +1,37 @@
 package malefiz.model
-import malefiz.model.Space
 
-import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
-class Field(players: Int) {
-  val eol = System.getProperty("line.separator")
+case class Field(matrix: Matrix[Token]):
+  def this(players: Int, filling: Token) = this(new Matrix(players, filling))
 
-  def linspace(a: Int, b: Int, num: Int): List[Int] =
-    if (num == 2) then List(a, b - 1)
-    else a.to(b, (b - a) / num + 1).toList
+  val width: Int = matrix.height
+  val eol: String = sys.props("line.separator")
+  val players = width/4-1
 
-  def listProjector(l: List[Int]): ListBuffer[Space] = {
-    var list = new ListBuffer[Space]()
-    for (i <- 0 until l.last + 1) {
-      if (l.contains(i)) {
-        list += new Space(1)
-      } else {
-        list += new Space(0)
-      }
-    }
-    return list;
-  }
+  def linSpace(lower: Int, upper: Int, num: Int): List[Int] =
+    if (num == 1) then List(upper/2)
+    else if (num == 2) then List(lower, upper-1)
+    else lower.to(upper, (upper-lower)/num+1).toList
 
-  def borderSpace(width: Int, num: Int): ListBuffer[Space] = {
-    val list = new ListBuffer[Space]();
-    for (i <- 0 until ((width - num) / 2)) {
-      list += new Space(0);
-    }
-    return list;
-  }
+  def vertBar(innerWidth: Int, vertices: Int): String =
+    "   " * ((width-innerWidth)/2) + 0.to(width).map(
+        i => if(linSpace(0, innerWidth, vertices).contains(i)) then " □ " else "   "
+      ).mkString("") + "   " * ((width-innerWidth)/2) + eol
 
-  def centerPath(width: Int, num: Int): List[Space] = {
-    var list = borderSpace(width, num)
-    for (i <- 0 until num) {
-      list += new Space(1)
-    }
-    (list ++= borderSpace(width, num)).toList
-  }
+  def bar(innerWidth: Int): String = 
+    "   " * ((width-innerWidth)/2) + " □ " 
+      * innerWidth + "   " 
+      * ((width-innerWidth)/2) + eol
 
-  def vPath(width: Int, num: Int, v: Int): List[Space] =
-    (borderSpace(width, num) ++= listProjector(linspace(0, num, v)) ++= borderSpace(width, num)).toList
+  def mesh(): String =
+    vertBar(1,1) +
+      1.to(players+1).map(
+        i => (bar(i*4+1) + vertBar(i*4+1,i+1))
+      ).mkString("") + bar(width)
 
-  def blockLayer(width: Int, num: Int, v: Int): List[List[Space]] =
-    var list: List[List[Space]] = List(centerPath(width, num), vPath(width, num, v))
-    return list
+  override def toString: String = mesh()
+  def put(stone: Token, x: Int, y: Int): Field = copy(matrix.replaceCell(x, y, stone))
+  def get(x: Int, y: Int): Token = matrix.cell(x, y)
 
 
-  def buildPyramid(width: Int, players: Int): List[List[Space]] = {
-    var list = borderSpace(width, 1) ++= ListBuffer(new Space(1)) ++= borderSpace(width, 1)
-    var builder: List[List[Space]] = List(list.toList);
-    for {i <- players - 1 until 0 by -1} {
-      builder = builder ++ blockLayer(width, width - (i * 4), players - i + 1)
-    }
-    builder = builder ::: blockLayer(width, width, players + 1)
-    builder = builder :+ centerPath(width, width)
-    return builder
-  }
-  def render: String = {
-    var list = buildPyramid(players*4+1, players)
-    var string = new StringBuilder()
-    for (l <- list) {
-      for (i <- l) {
-        string ++= i.toString
-      }
-      string ++= eol
-    }
-    return string.toString()
-  }
-}
+object Field:
+  def apply(players: Int, filling: Token) = new Field(players, filling)

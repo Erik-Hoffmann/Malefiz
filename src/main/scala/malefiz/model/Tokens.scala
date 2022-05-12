@@ -1,8 +1,12 @@
 package malefiz.model
 
-enum Tokens(display: String):
+enum Place(display: String):
   override def toString: String = display
-  case stone extends Tokens(" ■ ")
-  case player extends Tokens(" \uE008 ")
-  case field extends Tokens(" □ ")
-  case space extends Tokens("   ")
+  case stone extends Place(" ■ ")
+  case player extends Place(" \uE008 ")
+  case field extends Place(" □ ")
+  case space extends Place("   ")
+end Place
+
+class Token(place: String, theColor: String = "default"):
+  override def toString: String = Place.valueOf(place).toString + Colors.valueOf(theColor).toString

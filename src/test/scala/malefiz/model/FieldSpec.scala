@@ -7,7 +7,7 @@ class FieldSpec extends AnyWordSpec {
   val eol = System.getProperty("line.separator")
 
   "Malefiz" should {
-    var test = new Field(4)
+    var test = new oldField(4)
     "have a scalable playing field" in {
       test.render should be(
           "                         □                         " + eol +
@@ -20,7 +20,7 @@ class FieldSpec extends AnyWordSpec {
           " □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □ " + eol +
           " □           □           □           □           □ " + eol +
           " □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □ " + eol)
-      test = new Field(7)
+      test = new oldField(7)
       test.render should be(
           "                                           □                                           " + eol +
           "                                     □  □  □  □  □                                     " + eol +
@@ -38,7 +38,7 @@ class FieldSpec extends AnyWordSpec {
           " □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □ " + eol +
           " □           □           □           □           □           □           □           □ " + eol +
           " □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □  □ " + eol)
-      test = new Field(2)
+      test = new oldField(2)
       test.render should be(
         "             □             " + eol +
         "       □  □  □  □  □       " + eol +
