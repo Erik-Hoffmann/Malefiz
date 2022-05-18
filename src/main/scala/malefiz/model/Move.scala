@@ -1,3 +1,3 @@
 package malefiz.model
 
-case class Move(token: Token, x: Int, y: Int)
+case class Move(stone: Stone, x: Int, y: Int)

@@ -1,14 +1,15 @@
 package malefiz
 package controller
 
-import model.Field
+import model.Gameboard
 import model.Move
-import model.Token
+import model.Stone
+import model.Empty
 import util.Command
 import util.UndoManager
 
-class PutCommand(move: Move) extends Command[Field]:
-  override def noStep(field: Field): Field = field
-  override def doStep(field: Field): Field = field.put(move.token, move.x, move.y)
-  override def undoStep(field: Field): Field = field.put(Token("space"), move.x, move.y)
-  override def redoStep(field: Field): Field = field.put(move.token, move.x, move.y)
+class PutCommand(move: Move) extends Command[Gameboard]:
+  override def noStep(field: Gameboard): Gameboard = field
+  override def doStep(field: Gameboard): Gameboard = field.put(move.stone, move.x, move.y)
+  override def undoStep(field: Gameboard): Gameboard = field.put(Empty(), move.x, move.y)
+  override def redoStep(field: Gameboard): Gameboard = field.put(move.stone, move.x, move.y)
