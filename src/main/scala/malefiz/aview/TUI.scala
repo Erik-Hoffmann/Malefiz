@@ -4,9 +4,10 @@ package aview
 import controller.Controller
 import model.Move
 import model.Direction
-import model.Peg
 import scala.io.StdIn.readLine
 import util.Observer
+
+import scala.util.{Try, Success, Failure}
 
 class TUI(controller: Controller) extends Observer:
   controller.add(this)
@@ -17,25 +18,18 @@ class TUI(controller: Controller) extends Observer:
   override def update: Unit = println(controller.field.toString)
 
   def inputLoop(): Unit =
-    analyseInput(readLine) match
-      case None       =>
+    analyseInput(readLine, Dicer.dice) match // todo: move dicing somewhere else
+      case None       => println("y: undo | z: redo | d: put | q: print this")
       case Some(move) => controller.doAndPublish(controller.put, move)
     inputLoop()
 
-  def analyseInput(input: String): Option[Move] =
+  def analyseInput(input: String, diced: Int): Option[Int] =
     input match
       case "q" => None
       case "z" => controller.doAndPublish(controller.redo); None
       case "y" => controller.doAndPublish(controller.undo); None
-//      case n: Int => {
-//        val num = n.toInt
-        /*
-        * if (num < currentPlayer.stoneObs.length) {
-            directionAnalyser(readLine)
-          }
-        * */
-//      }
-      case _ => Some(Move(controller.field.playerList(0).stoneObs(0), 0,0))
+      case "d" => controller.put(diced); None
+      case _ => Some(0)
 
   def directionAnalyser(input: String): Array[Direction] =
     val directions = input.split("")
@@ -47,3 +41,20 @@ class TUI(controller: Controller) extends Observer:
       case "d" => Direction.Down
       case _   => Direction.Empty
     )
+
+  object Dicer {
+    def dice:Int = manageDice(scala.util.Random.nextInt(6)+1)
+
+    def manageDice(diced: Int):Int =
+      println("diced: " + diced)
+      if diced == 6 then choose(readLine, diced) else diced
+
+    def choose(input: String, diced: Int):Int =
+      println("input 'n' for a new peg!")
+      input match
+        case "n" => // currentPlayer.stoneObs + currentPlayer.startPos
+           diced
+        case _ => dice + diced
+  }
+
+  def validateNumber(x: String): Try[Int] = Try { x.toInt } // Try Monad ?

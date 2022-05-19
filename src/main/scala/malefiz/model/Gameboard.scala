@@ -15,14 +15,14 @@ case class Gameboard(players: Int) extends GameboardTrait(players):
     board
 
   def updateRowFilled(row: Int, innerWidth: Int): Array[Ground] =
-    (0 until width).map(idx => if idx< (width-innerWidth)/2 || idx > width-((width-innerWidth)/2+1) then Field(row,idx,Empty()) else Field(row,idx, FreeField())).toArray
+    (0 until width).map(idx => if idx< (width-innerWidth)/2 || idx > width-((width-innerWidth)/2+1) then Field(row,idx,Stone("empty")) else Field(row,idx, Stone("freefield"))).toArray
 
   def updateRowSpaced(row: Int, vertices: Int): Array[Ground] =
     (0 until width).map(idx =>
       if idx< (width - (vertices+(vertices-1) * 3 ))/2 ||
         idx > width-((width - (vertices+(vertices-1) * 3 ))/2) ||
           (idx - ((width - (vertices+(vertices-1) * 3 ))/2)) % 4 != 0
-      then Field(row,idx,Empty()) else Field(row,idx, FreeField())).toArray
+      then Field(row,idx,Stone("empty")) else Field(row,idx, Stone("freefield"))).toArray
 
   def dimensions(players: Int): (Int, Int) = (players*4+1, players*2+2)
 
