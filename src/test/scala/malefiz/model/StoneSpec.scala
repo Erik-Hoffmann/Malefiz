@@ -5,21 +5,21 @@ import org.scalatest.wordspec.AnyWordSpec
 
 class StoneSpec extends AnyWordSpec {
   "A Stone" should {
-    val stone = Stone.getStone("empty")
+    val stone = Stone("empty")
     "have a freefield with a String representation" in {
       stone.toString should be("   ")
     }
-    val blocker = Stone.getStone("blocker")
+    val blocker = Stone("blocker")
     "have a blocker with a String representation" in {
       blocker.toString should be(" ■ ")
     }
-    val field = new Field(1, 1, stone)
-    val peg = Stone.getStone(field)
+    val freefield = Stone("freefield")
+    "have a freefield with a string representation" in {
+      freefield.toString should be (" □ ")
+    }
+    val peg = Stone("peg")
     "have a peg with a String representation" in {
       peg.toString should be(" \uE008 ")
-    }
-    "have a position" in {
-      peg.position.toString should be("   ")
     }
   }
 }
