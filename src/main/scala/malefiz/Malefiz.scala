@@ -3,7 +3,7 @@ package malefiz
 import scala.io.StdIn.readLine
 
 import aview.TUI
-//import controller.PutCommand
+//import controller.ExecuteTurnCommand
 import controller.Controller
 import model.Gameboard
 
@@ -13,6 +13,6 @@ import model.Gameboard
   println("Malefiz!")
   val players = readLine("Number of Players: ").toInt
   val board = Gameboard(players)
-  val controller = Controller(board.buildBoard())
+  val controller = Controller(board)
   val tui = TUI(controller)
   tui.run()

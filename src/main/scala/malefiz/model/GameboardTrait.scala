@@ -8,6 +8,8 @@ trait GameboardTrait(players: Int) {
 
   val board: Array[Array[Ground]] = Array.ofDim[Ground](height, width)
 
+//  val dice: Int
+
 
   def dimensions(players: Int): (Int, Int)
 
@@ -22,6 +24,8 @@ trait GameboardTrait(players: Int) {
   def buildBoard(): Gameboard
 
   def put(stone: Stone, x:Int,y:Int): Gameboard
+
+//  def store(num: Int): Gameboard
 
   override def toString: String
 }

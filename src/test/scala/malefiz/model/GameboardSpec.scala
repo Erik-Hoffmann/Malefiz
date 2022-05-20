@@ -28,5 +28,14 @@ class GameboardSpec extends AnyWordSpec {
         " □  □  □  □  □ "
       )
     }
+
+    "return an example updated gameboard" in {
+      theBoard.exampleUpdateBoard().toString should be (
+        " □  □  □  □  □ " + eol +
+          " □  □  □  □  □ " + eol +
+          " □           □ " + eol +
+          " □  □  □  □  □ "
+      )
+    }
   }
 }

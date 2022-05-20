@@ -3,7 +3,11 @@ package aview
 
 import controller.Controller
 import model.Move
+import model.Turn
 import model.Direction
+import model.Gameboard
+import model.Field
+import model.Player
 import scala.io.StdIn.readLine
 import util.Observer
 
@@ -12,49 +16,40 @@ import scala.util.{Try, Success, Failure}
 class TUI(controller: Controller) extends Observer:
   controller.add(this)
   def run(): Unit =
-    println(controller.field.toString)
-    inputLoop()
+    doTurn()
 
-  override def update: Unit = println(controller.field.toString)
+  
+  override def update(): Unit = println(controller.field.toString)
 
-  def inputLoop(): Unit =
-    analyseInput(readLine, Dicer.dice) match // todo: move dicing somewhere else
-      case None       => println("y: undo | z: redo | d: put | q: print this")
-      case Some(move) => controller.doAndPublish(controller.put, move)
-    inputLoop()
+  def doTurn(): Unit =
+    controller.dice()
+    if controller.field.playerList.indexOf(controller.currentPlayer) < controller.field.playerList.length
+      then controller.nextPlayer()
+      else controller.firstPlayer()
+    directionAnalyser(choosePeg(controller.currentPlayer), readLine)
 
-  def analyseInput(input: String, diced: Int): Option[Int] =
+  def choosePeg(player: Player): Field =
+    controller.field.getField(player.stoneObs(validateNumber(readLine).getOrElse(0)))
+
+
+
+  def analyseInput(input: String): Option[Int] =
     input match
-      case "q" => None
-      case "z" => controller.doAndPublish(controller.redo); None
-      case "y" => controller.doAndPublish(controller.undo); None
-      case "d" => controller.put(diced); None
-      case _ => Some(0)
+      case "q" => System.exit(0); None
+      case "z" => controller.redo(); controller.doAndPublish(); None
+      case "y" => controller.undo(); controller.doAndPublish(); None
+      case "n" => controller.doAndPublish(controller.field.buildBoard()); None
+      case "u" => controller.doAndPublish(controller.field.exampleUpdateBoard()); None
 
-  def directionAnalyser(input: String): Array[Direction] =
-    val directions = input.split("")
-    directions.map(d =>
-    d match
-      case "r" => Direction.Right
-      case "l" => Direction.Left
-      case "u" => Direction.Up
-      case "d" => Direction.Down
-      case _   => Direction.Empty
-    )
+  def directionAnalyser(pegField: Field, input: String): Array[Direction] =
+    input.map(d => if ! directionValid(pegField, input) then directionAnalyser(pegField, input) else controller.field.movePeg(pegField, ))
 
-  object Dicer {
-    def dice:Int = manageDice(scala.util.Random.nextInt(6)+1)
-
-    def manageDice(diced: Int):Int =
-      println("diced: " + diced)
-      if diced == 6 then choose(readLine, diced) else diced
-
-    def choose(input: String, diced: Int):Int =
-      println("input 'n' for a new peg!")
-      input match
-        case "n" => // currentPlayer.stoneObs + currentPlayer.startPos
-           diced
-        case _ => dice + diced
-  }
+  def directionValid(currentField: Field, direction: String): Option[Direction] =
+    direction match
+      case "r" => if controller.field.getField(currentField.x + 1, currentField.y).free() then Direction.right else None
+      case "l" => if controller.field.getField(currentField.x - 1, currentField.y).free() then Direction.left else None
+      case "u" => if controller.field.getField(currentField.x, currentField.y + 1).free() then Direction.up else None
+      case "d" => if controller.field.getField(currentField.x, currentField.y - 1).free() then Direction.down else None
+      case _ => println("Fehler!"); None
 
   def validateNumber(x: String): Try[Int] = Try { x.toInt } // Try Monad ?
