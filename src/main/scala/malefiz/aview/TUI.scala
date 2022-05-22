@@ -2,12 +2,9 @@ package malefiz
 package aview
 
 import controller.Controller
-import model.Move
 import model.Turn
 import model.Direction
 import model.Gameboard
-import model.Field
-import model.Player
 import scala.io.StdIn.readLine
 import util.Observer
 
@@ -23,13 +20,13 @@ class TUI(controller: Controller) extends Observer:
 
   def doTurn(): Unit =
     controller.dice()
-    if controller.field.playerList.indexOf(controller.currentPlayer) < controller.field.playerList.length
+    if controller.field.playerList.indexOf(controller.field.currentPlayer) < controller.field.playerList.length
       then controller.nextPlayer()
       else controller.firstPlayer()
-    directionAnalyser(choosePeg(controller.currentPlayer), readLine)
+    //directionAnalyser(choosePeg(controller.currentPlayer), readLine)
 
-  def choosePeg(player: Player): Field =
-    controller.field.getField(player.stoneObs(validateNumber(readLine).getOrElse(0)))
+  //def choosePeg(player: Player): Unit = {} // Field =
+    //controller.field.getField(player.stoneObs(validateNumber(readLine).getOrElse(0)))
 
 
 
@@ -41,15 +38,17 @@ class TUI(controller: Controller) extends Observer:
       case "n" => controller.doAndPublish(controller.field.buildBoard()); None
       case "u" => controller.doAndPublish(controller.field.exampleUpdateBoard()); None
 
-  def directionAnalyser(pegField: Field, input: String): Array[Direction] =
-    input.map(d => if ! directionValid(pegField, input) then directionAnalyser(pegField, input) else controller.field.movePeg(pegField, ))
+  //def directionAnalyser(pegField: Field, input: String): Unit = {}//Array[Direction] =
+    //input.map(d => if !directionValid(pegField, input) then directionAnalyser(pegField, input) else controller.field.movePeg(pegField, input))
 
-  def directionValid(currentField: Field, direction: String): Option[Direction] =
+  //def directionValid(currentField: Field, direction: String): Unit = {} // Option[Direction] =
+    /*
     direction match
-      case "r" => if controller.field.getField(currentField.x + 1, currentField.y).free() then Direction.right else None
-      case "l" => if controller.field.getField(currentField.x - 1, currentField.y).free() then Direction.left else None
-      case "u" => if controller.field.getField(currentField.x, currentField.y + 1).free() then Direction.up else None
-      case "d" => if controller.field.getField(currentField.x, currentField.y - 1).free() then Direction.down else None
+      case "r" => if controller.field.getField(currentField.x + 1, currentField.y).free() then Direction.Right else None
+      case "l" => if controller.field.getField(currentField.x - 1, currentField.y).free() then Direction.Left else None
+      case "u" => if controller.field.getField(currentField.x, currentField.y + 1).free() then Direction.Up else None
+      case "d" => if controller.field.getField(currentField.x, currentField.y - 1).free() then Direction.Down else None
       case _ => println("Fehler!"); None
+    */
 
   def validateNumber(x: String): Try[Int] = Try { x.toInt } // Try Monad ?
