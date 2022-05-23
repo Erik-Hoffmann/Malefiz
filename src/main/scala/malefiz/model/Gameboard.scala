@@ -30,10 +30,15 @@ case class Gameboard(players: Int) extends GameboardTrait(players):
       then Field(row,idx,Stone(Fields.Empty)) else Field(row,idx, Stone(Fields.FreeField))).toArray
 
   def dimensions(players: Int): (Int, Int) = (players*4+1, players*2+2)
-
-//TODO delete this method
+  
   def put(stone: Stone, x: Int, y:Int): Gameboard =
     board(x)(y) = Field(x,y,stone)
+    this
+    
+  def switchPos(srcPos: (Int, Int), destPos:(Int,Int)): Gameboard =
+    val temp: Ground = getField(srcPos._1, srcPos._2)
+    board(srcPos._1)(srcPos._2) = getField(destPos._1, destPos._2)
+    board(destPos._1)(destPos._2) = temp
     this
   
   def getField(x: Int,y: Int): Ground = board(x)(y)
