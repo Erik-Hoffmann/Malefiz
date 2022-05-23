@@ -26,7 +26,7 @@ class TUI(controller: Controller) extends Observer:
     //directionAnalyser(choosePeg(controller.currentPlayer), readLine)
 
   //def choosePeg(player: Player): Unit = {} // Field =
-    //controller.field.getField(player.stoneObs(validateNumber(readLine).getOrElse(0)))
+    //controller.field.getField(player.pegs(validateNumber(readLine).getOrElse(0)))
 
 
 

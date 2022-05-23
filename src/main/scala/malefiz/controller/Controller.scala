@@ -20,7 +20,7 @@ case class Controller(var field: Gameboard) extends Observable:
     field.currentPlayer = field.playerList(0)
       
   def doAndPublish(doThis: Int => Gameboard, turn: Turn): Unit =
-    //field = doThis(turn)
+//    field = doThis(turn)
     notifyObservers()
 
   def doAndPublish(doThis: => Gameboard): Unit =

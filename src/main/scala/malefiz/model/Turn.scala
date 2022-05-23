@@ -1,3 +1,3 @@
 package malefiz.model
 
-case class Turn(newStone: Stone, oldStone: Stone, x: Int, y: Int)
+case class Turn(srcPos: (Int, Int), destPos: (Int, Int))
