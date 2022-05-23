@@ -37,5 +37,14 @@ class GameboardSpec extends AnyWordSpec {
           " □  □  □  □  □ "
       )
     }
+
+    "return an updated gameboard" in {
+      theBoard.put(Stone(Fields.Peg), 0,0).toString should be (
+        " \uE008  □  □  □  □ " + eol +
+          " □  □  □  □  □ " + eol +
+          " □           □ " + eol +
+          " □  □  □  □  □ "
+      )
+    }
   }
 }

@@ -14,10 +14,16 @@ case class Blocker() extends Stone(" ■ ")
 case class Empty() extends Stone("   ")
 
 object Stone {
-  def apply(kind: String): Stone =
+  def apply(kind: Fields): Stone =
     kind match
-      case "freefield" => new FreeField
-      case "blocker" => new Blocker
-      case "empty" => new Empty
-      case "peg" => new Peg
+      case Fields.FreeField => new FreeField
+      case Fields.Blocker => new Blocker
+      case Fields.Empty => new Empty
+      case Fields.Peg => new Peg
 }
+
+enum Fields():
+  case FreeField
+  case Blocker
+  case Empty
+  case Peg

@@ -20,30 +20,28 @@ case class Gameboard(players: Int) extends GameboardTrait(players):
     board
 
   def updateRowFilled(row: Int, innerWidth: Int): Array[Ground] =
-    (0 until width).map(idx => if idx< (width-innerWidth)/2 || idx > width-((width-innerWidth)/2+1) then Field(row,idx,Stone("empty")) else Field(row,idx, Stone("freefield"))).toArray
+    (0 until width).map(idx => if idx< (width-innerWidth)/2 || idx > width-((width-innerWidth)/2+1) then Field(row,idx,Stone(Fields.Empty)) else Field(row,idx, Stone(Fields.FreeField))).toArray
 
   def updateRowSpaced(row: Int, vertices: Int): Array[Ground] =
     (0 until width).map(idx =>
       if idx< (width - (vertices+(vertices-1) * 3 ))/2 ||
         idx > width-((width - (vertices+(vertices-1) * 3 ))/2) ||
           (idx - ((width - (vertices+(vertices-1) * 3 ))/2)) % 4 != 0
-      then Field(row,idx,Stone("empty")) else Field(row,idx, Stone("freefield"))).toArray
+      then Field(row,idx,Stone(Fields.Empty)) else Field(row,idx, Stone(Fields.FreeField))).toArray
 
   def dimensions(players: Int): (Int, Int) = (players*4+1, players*2+2)
 
-  def put(field: Field) : Gameboard = this
-   // board(field.x)(field.y) = field
 //TODO delete this method
   def put(stone: Stone, x: Int, y:Int): Gameboard =
-    board(x)(y) = new Field(x,y,stone)
+    board(x)(y) = Field(x,y,stone)
     this
   
   def getField(x: Int,y: Int): Ground = board(x)(y)
 
-  def movePeg(oldField: Field, newField: Field): Array[Array[Ground]] =
-    put(Field(oldField.x, oldField.y, Stone("freefield")))
-    put(newField)
-    board
+//  def movePeg(oldField: Field, newField: Field): Array[Array[Ground]] =
+//    put(oldField.x, oldField.y, Stone(Fields.FreeField))
+//    put(newField.x, newField.y)
+//    board
 
 //  def store(num: Int) =
 //    dice = num

@@ -30,13 +30,13 @@ class TUI(controller: Controller) extends Observer:
 
 
 
-  def analyseInput(input: String): Option[Int] =
-    input match
-      case "q" => System.exit(0); None
-      case "z" => controller.redo(); controller.doAndPublish(); None
-      case "y" => controller.undo(); controller.doAndPublish(); None
-      case "n" => controller.doAndPublish(controller.field.buildBoard()); None
-      case "u" => controller.doAndPublish(controller.field.exampleUpdateBoard()); None
+  def analyseInput(input: String): Option[Int] = Some(0)
+//    input match
+//      case "q" => System.exit(0); None
+//      case "z" => controller.redo(); controller.doAndPublish(); None
+//      case "y" => controller.undo(); controller.doAndPublish(); None
+//      case "n" => controller.doAndPublish(controller.field.buildBoard()); None
+//      case "u" => controller.doAndPublish(controller.field.exampleUpdateBoard()); None
 
   //def directionAnalyser(pegField: Field, input: String): Unit = {}//Array[Direction] =
     //input.map(d => if !directionValid(pegField, input) then directionAnalyser(pegField, input) else controller.field.movePeg(pegField, input))

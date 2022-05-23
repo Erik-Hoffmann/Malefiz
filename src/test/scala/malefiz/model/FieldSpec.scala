@@ -5,7 +5,7 @@ import org.scalatest.wordspec.AnyWordSpec
 
 class FieldSpec extends AnyWordSpec {
   "A Field" should {
-    val field = new Field(1, 1, Stone("freefield"))
+    val field = Field(1, 1, Stone(Fields.FreeField))
     "have a String representation" in {
       field.toString should be(" □ ")
     }

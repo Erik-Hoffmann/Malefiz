@@ -30,14 +30,13 @@ case class Controller(var field: Gameboard) extends Observable:
   def doAndPublish(): Unit =
     notifyObservers()
 
-  def put(turn: Turn): Unit = undoManager.doStep(new ExecuteTurnCommand(turn, this))
+  def put(turn: Turn): Unit = undoManager.doStep(field, new ExecuteTurnCommand(turn, this))
 
-  def undo(): Unit =
-    undoManager.undoStep()
-    val lastState = state
+  def undo: Gameboard =
+    undoManager.undoStep(field)
 
-  def redo(): Unit =
-    undoManager.redoStep()
+  def redo(): Gameboard =
+    undoManager.redoStep(field)
 
 
   override def toString: String = field.toString
