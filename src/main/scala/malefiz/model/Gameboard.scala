@@ -2,6 +2,7 @@ package malefiz.model
 
 case class Gameboard(players: Int) extends GameboardTrait(players):
   val playerList: Array[Player] = createPlayers
+  var currentPlayer: Player = playerList.last
 
   def createPlayers: Array[Player] = Array.tabulate(players) {n => new Player(Colors.fromOrdinal(n), 2+(n*4), height) }
 
@@ -30,8 +31,12 @@ case class Gameboard(players: Int) extends GameboardTrait(players):
 
   def dimensions(players: Int): (Int, Int) = (players*4+1, players*2+2)
 
-  def put(field: Field): Unit =
-    board(field.x)(field.y) = field
+  def put(field: Field) : Gameboard = this
+   // board(field.x)(field.y) = field
+//TODO delete this method
+  def put(stone: Stone, x: Int, y:Int): Gameboard =
+    board(x)(y) = new Field(x,y,stone)
+    this
   
   def getField(x: Int,y: Int): Ground = board(x)(y)
 

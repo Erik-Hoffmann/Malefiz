@@ -6,24 +6,21 @@ import util.Observable
 import util.UndoManager
 import model.Gameboard
 import model.Turn
-import model.Player
 import State._
 
 case class Controller(var field: Gameboard) extends Observable:
 
   val undoManager = new UndoManager[Gameboard]
-  var currentPlayer: Player = field.playerList.last
   var state: State = Output
   var diced: Int = 0
 
-  def nextPlayer(): Unit =
-    currentPlayer = field.playerList(field.playerList.indexOf(currentPlayer)+1)
+  def nextPlayer(): Unit = field.currentPlayer = field.playerList(field.playerList.indexOf(field.currentPlayer)+1)
     
   def firstPlayer(): Unit =
-    currentPlayer = field.playerList(0)
+    field.currentPlayer = field.playerList(0)
       
   def doAndPublish(doThis: Int => Gameboard, turn: Turn): Unit =
-    field = doThis(turn)
+    //field = doThis(turn)
     notifyObservers()
 
   def doAndPublish(doThis: => Gameboard): Unit =

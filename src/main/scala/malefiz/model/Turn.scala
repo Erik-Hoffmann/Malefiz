@@ -1,3 +1,3 @@
 package malefiz.model
 
-case class Turn(player: Player, move: Move)
+case class Turn(newStone: Stone, oldStone: Stone, x: Int, y: Int)
