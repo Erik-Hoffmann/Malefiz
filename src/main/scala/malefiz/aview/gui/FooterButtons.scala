@@ -1,5 +1,6 @@
-package malefiz.aview
+package malefiz.aview.gui
 
+import malefiz.aview.gui.{RedoButton, UndoButton}
 import scalafx.event.EventIncludes.handle
 import scalafx.scene.control.Button
 import scalafx.scene.layout.{HBox, Priority}

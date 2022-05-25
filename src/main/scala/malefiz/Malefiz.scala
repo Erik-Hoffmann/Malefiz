@@ -1,8 +1,8 @@
 package malefiz
 
 import scala.io.StdIn.readLine
-
 import aview.TUI
+import  aview.gui.GUI
 //import controller.ExecuteTurnCommand
 import controller.Controller
 import model.Gameboard
@@ -16,3 +16,4 @@ import model.Gameboard
   val controller = Controller(board)
   val tui = TUI(controller)
   tui.run()
+  GUI.init(controller)
