@@ -16,4 +16,4 @@ import model.Gameboard
   val controller = Controller(board)
   val tui = TUI(controller)
   tui.run()
-  GUI.init(controller)
+  //GUI.init(controller)

@@ -13,6 +13,7 @@ case class Controller(var field: Gameboard) extends Observable:
   val undoManager = new UndoManager[Gameboard]
   var state: State = Output
   var diced: Int = 0
+  field.buildBoard()
 
   def nextPlayer(): Unit = field.currentPlayer = field.playerList(field.playerList.indexOf(field.currentPlayer)+1)
     
@@ -30,13 +31,18 @@ case class Controller(var field: Gameboard) extends Observable:
   def doAndPublish(): Unit =
     notifyObservers()
 
-  def put(turn: Turn): Unit = undoManager.doStep(field, new ExecuteTurnCommand(turn, this))
+  def put(turn: Turn): Unit = 
+    undoManager.doStep(field, ExecuteTurnCommand(turn, this))
+    notifyObservers()
 
-  def undo: Gameboard =
-    undoManager.undoStep(field)
+  def undo: Unit = 
+    field = undoManager.undoStep(field)
+    notifyObservers()
 
-  def redo(): Gameboard =
+
+  def redo(): Unit =
     undoManager.redoStep(field)
+    notifyObservers()
 
 
   override def toString: String = field.toString

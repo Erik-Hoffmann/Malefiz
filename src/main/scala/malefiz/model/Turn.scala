@@ -1,3 +1,3 @@
 package malefiz.model
 
-case class Turn(srcPos: (Int, Int), destPos: (Int, Int))
+case class Turn(srcPos: Option[(Int,Int)], destPos: (Int, Int))

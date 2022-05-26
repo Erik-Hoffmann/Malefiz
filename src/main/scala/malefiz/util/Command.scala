@@ -1,5 +1,7 @@
 package malefiz.util
 
+import malefiz.model.Turn
+
 trait Command[T]:
   def noStep(state: T): T
   def doStep(state: T): T

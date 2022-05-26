@@ -21,6 +21,7 @@ class NavigationButtons extends BorderPane {
   left = new Button {
     text = "Left"
     maxWidth = Double.MaxValue
+    hgrow = Priority.Always
     onAction = handle {
       leftPressed()
     }
@@ -28,6 +29,7 @@ class NavigationButtons extends BorderPane {
   right = new Button {
     text = "Right"
     maxWidth = Double.MaxValue
+    hgrow = Priority.Always
     onAction = handle {
       rightPressed()
     }

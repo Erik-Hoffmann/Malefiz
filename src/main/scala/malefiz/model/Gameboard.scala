@@ -35,13 +35,28 @@ case class Gameboard(players: Int) extends GameboardTrait(players):
     board(x)(y) = Field(x,y,stone)
     this
 
-  def switchPos(srcPos: (Int, Int), destPos:(Int,Int)): Gameboard =
-    val temp: Ground = getField(srcPos._1, srcPos._2)
-    board(srcPos._1)(srcPos._2) = getField(destPos._1, destPos._2)
+  def switchPos(srcPos: Option[(Int, Int)], destPos:(Int,Int)): Gameboard =
+    if(srcPos.isEmpty){
+        putNewPeg(destPos)
+      return this
+    }
+    val temp: Ground = getField(srcPos.get._1, srcPos.get._2)
+    board(srcPos.get._1)(srcPos.get._2) = getField(destPos._1, destPos._2)
     board(destPos._1)(destPos._2) = temp
     this
   
   def getField(x: Int,y: Int): Ground = board(x)(y)
+
+  private def putNewPeg(destPos :(Int,Int)): Unit = {
+   currentPlayer.pegs :+= destPos
+    board(destPos._1)(destPos._2) = Field(destPos._1, destPos._2, Stone.apply(Fields.Peg))
+  }
+
+  def undoPutPeg(destPos :(Int, Int)): Gameboard = {
+    currentPlayer.pegs = currentPlayer.pegs.take(currentPlayer.pegs.indexOf(destPos))
+    board(destPos._1)(destPos._2) = new Field(destPos._1,destPos._2, Stone.apply(Fields.FreeField))
+    this
+  }
 
 //  def movePeg(oldField: Field, newField: Field): Array[Array[Ground]] =
 //    put(oldField.x, oldField.y, Stone(Fields.FreeField))
@@ -61,3 +76,31 @@ case class Gameboard(players: Int) extends GameboardTrait(players):
   def exampleUpdateBoard(): Gameboard =
     exampleUpdate(board)
     this
+
+  def checkPeg(pos :(Int,Int)): Boolean = {
+    val f : Field = getField(pos._1,pos._2).asInstanceOf[Field]
+    f.stone match
+      case p: Peg => true
+      case  _ => false
+  }
+
+  def checkEmpty(pos :(Int,Int)): Boolean = {
+    val f : Field = getField(pos._1,pos._2).asInstanceOf[Field]
+    f.stone match
+      case p: Empty => true
+      case  _ => false
+  }
+
+  def checkBlocker(pos :(Int,Int)): Boolean = {
+    val f : Field = getField(pos._1,pos._2).asInstanceOf[Field]
+    f.stone match
+      case p: Blocker => true
+      case  _ => false
+  }
+
+  def checkFreeField(pos :(Int,Int)): Boolean = {
+    val f : Field = getField(pos._1,pos._2).asInstanceOf[Field]
+    f.stone match
+      case p: FreeField => true
+      case  _ => false
+  }

@@ -5,13 +5,17 @@ import controller.Controller
 import model.Turn
 import model.Direction
 import model.Gameboard
+
 import scala.io.StdIn.readLine
 import util.Observer
 
-import scala.util.{Try, Success, Failure}
+import java.util.Scanner
+import scala.util.{Failure, Success, Try}
 
 class TUI(controller: Controller) extends Observer:
   controller.add(this)
+  println(controller.field.toString)
+
   def run(): Unit =
     doTurn()
 
@@ -19,10 +23,23 @@ class TUI(controller: Controller) extends Observer:
   override def update(): Unit = println(controller.field.toString)
 
   def doTurn(): Unit =
-    controller.dice()
-    if controller.field.playerList.indexOf(controller.field.currentPlayer) < controller.field.playerList.length
-      then controller.nextPlayer()
-      else controller.firstPlayer()
+    val input = readLine("Command to Execute: ")
+    input match
+      case "q" => System.exit(0);
+      case "p" => controller.field.currentPlayer.pegs.foreach(x =>println(x.toString()))
+      case "s" => controller.put(new Turn(Option.empty,waitOnInput))
+      case "z" => controller.undo
+      case "r" => controller.redo()
+
+
+    println(controller.field.toString)
+    if controller.field.playerList.indexOf(controller.field.currentPlayer) + 1< controller.field.playerList.length
+      then
+      controller.nextPlayer()
+      doTurn()
+      else
+      controller.firstPlayer()
+      doTurn()
     //directionAnalyser(choosePeg(controller.currentPlayer), readLine)
 
   //def choosePeg(player: Player): Unit = {} // Field =
@@ -50,5 +67,10 @@ class TUI(controller: Controller) extends Observer:
       case "d" => if controller.field.getField(currentField.x, currentField.y - 1).free() then Direction.Down else None
       case _ => println("Fehler!"); None
     */
-
+  def waitOnInput: (Int, Int) = {
+      val sc = new Scanner(System.in)
+      val pos1 = readLine("Position for Peg x: ").toInt
+      val pos2 = readLine("y: ").toInt
+      return (pos1,pos2)
+    }
   def validateNumber(x: String): Try[Int] = Try { x.toInt } // Try Monad ?

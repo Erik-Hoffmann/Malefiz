@@ -1,29 +1,36 @@
 package malefiz.aview.gui
 
-import malefiz.aview.gui.{RedoButton, UndoButton}
+import malefiz.controller.Controller
+import scalafx.scene.control.Label
+import scalafx.scene.control.TextField
 import scalafx.event.EventIncludes.handle
 import scalafx.scene.control.Button
 import scalafx.scene.layout.{HBox, Priority}
 
-class FooterButtons extends HBox {
+class FooterButtons(con : Controller) extends HBox {
   val undoButton = new UndoButton
   val redoButton = new RedoButton
-  val navigationButton = new NavigationButtons
-  children = Seq(undoButton, redoButton, navigationButton)
-}
-class UndoButton extends Button {
-  text = "Undo"
-  maxWidth = Double.MaxValue
-  hgrow = Priority.Always
-  onAction = handle {
-    //TODO link with undo in controller
+  val textField = new Label {
+    maxWidth = Double.MaxValue
+    hgrow = Priority.Always
   }
-}
-class RedoButton extends Button {
-  text = "Redo"
-  maxWidth = Double.MaxValue
-  hgrow = Priority.Always
-  onAction = handle {
-    //TODO link with redo in controller
+  val navigationButton = new NavigationButtons
+  children = Seq(undoButton, redoButton, textField, navigationButton)
+
+  class UndoButton extends Button {
+    text = "Undo"
+    maxWidth = Double.MaxValue
+    hgrow = Priority.Always
+    onAction = handle {
+      con.undo
+    }
+  }
+  class RedoButton extends Button {
+    text = "Redo"
+    maxWidth = Double.MaxValue
+    hgrow = Priority.Always
+    onAction = handle {
+      con.redo()
+    }
   }
 }
