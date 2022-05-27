@@ -32,7 +32,7 @@ case class Gameboard(players: Int) extends GameboardTrait(players):
   def dimensions(players: Int): (Int, Int) = (players*4+1, players*2+2)
 
   def put(stone: Stone, x: Int, y:Int): Gameboard =
-    board(x)(y) = Field(x,y,stone)
+    board(x)(y) = new Field(x,y,stone)
     this
 
   def switchPos(srcPos: Option[(Int, Int)], destPos:(Int,Int)): Gameboard =
@@ -87,12 +87,13 @@ case class Gameboard(players: Int) extends GameboardTrait(players):
   def checkEmpty(pos :(Int,Int)): Boolean = {
     val f : Field = getField(pos._1,pos._2).asInstanceOf[Field]
     f.stone match
-      case p: Empty => true
+      case e :Empty => true
       case  _ => false
   }
 
   def checkBlocker(pos :(Int,Int)): Boolean = {
     val f : Field = getField(pos._1,pos._2).asInstanceOf[Field]
+    println(f)
     f.stone match
       case p: Blocker => true
       case  _ => false

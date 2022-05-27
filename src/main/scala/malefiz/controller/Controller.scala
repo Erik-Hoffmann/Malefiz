@@ -19,7 +19,7 @@ case class Controller(var field: Gameboard) extends Observable:
     
   def firstPlayer(): Unit =
     field.currentPlayer = field.playerList(0)
-      
+      /*
   def doAndPublish(doThis: Int => Gameboard, turn: Turn): Unit =
 //    field = doThis(turn)
     notifyObservers()
@@ -30,12 +30,12 @@ case class Controller(var field: Gameboard) extends Observable:
 
   def doAndPublish(): Unit =
     notifyObservers()
-
-  def put(turn: Turn): Unit = 
+*/
+  def put(turn: Turn): Unit =
     undoManager.doStep(field, ExecuteTurnCommand(turn, this))
     notifyObservers()
 
-  def undo: Unit = 
+  def undo: Unit =
     field = undoManager.undoStep(field)
     notifyObservers()
 

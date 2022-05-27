@@ -15,5 +15,14 @@ import model.Gameboard
   val board = Gameboard(players)
   val controller = Controller(board)
   val tui = TUI(controller)
+  val gui = GUI(controller)
+  val threadGui = new Thread {
+    override def run: Unit = {
+      gui.main(Array[String]())
+    }
+  }
+  threadGui.start()
   tui.run()
-  //GUI.init(controller)
+
+
+

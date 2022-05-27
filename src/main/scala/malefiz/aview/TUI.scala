@@ -26,13 +26,11 @@ class TUI(controller: Controller) extends Observer:
     val input = readLine("Command to Execute: ")
     input match
       case "q" => System.exit(0);
-      case "p" => controller.field.currentPlayer.pegs.foreach(x =>println(x.toString()))
-      case "s" => controller.put(new Turn(Option.empty,waitOnInput))
+      case "p" => controller.field.playerList.foreach(p => p.pegs.foreach(pos => println(pos.toString())))
+      case "s" => controller.put(new Turn(Option.empty,inputPosition))
       case "z" => controller.undo
       case "r" => controller.redo()
-
-
-    println(controller.field.toString)
+    
     if controller.field.playerList.indexOf(controller.field.currentPlayer) + 1< controller.field.playerList.length
       then
       controller.nextPlayer()
@@ -67,7 +65,7 @@ class TUI(controller: Controller) extends Observer:
       case "d" => if controller.field.getField(currentField.x, currentField.y - 1).free() then Direction.Down else None
       case _ => println("Fehler!"); None
     */
-  def waitOnInput: (Int, Int) = {
+  def inputPosition: (Int, Int) = {
       val sc = new Scanner(System.in)
       val pos1 = readLine("Position for Peg x: ").toInt
       val pos2 = readLine("y: ").toInt

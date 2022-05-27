@@ -39,12 +39,30 @@ class GameboardSpec extends AnyWordSpec {
     }
 
     "return an updated gameboard" in {
-      theBoard.put(Stone(Fields.Peg), 0,0).toString should be (
+      theBoard.put(Stone.apply(Fields.Peg), 0,0).toString should be (
         " \uE008  □  □  □  □ " + eol +
           " □  □  □  □  □ " + eol +
           " □           □ " + eol +
           " □  □  □  □  □ "
       )
+    }
+    "check if there is a peg" in {
+      theBoard.checkPeg(0,0 )should be(true)
+    }
+    "check if there is a FreeField" in {
+      theBoard.checkFreeField((1,1)) should be(true)
+    }
+    "check if there is an empty field" in {
+      theBoard.checkEmpty(2,1) should be(true)
+    }
+    var newBoard = theBoard.buildBoard()
+    "check if there is a Blocker" in {
+      newBoard = newBoard.put(Stone.apply(Fields.Blocker),0,0)
+      newBoard.checkBlocker(0,0) should be(true)
+    }
+    "move the blocker" in {
+      newBoard.switchPos(Option.apply((0,0)),(1,1))
+      newBoard.checkBlocker(1,1) should be(true)
     }
   }
 }
