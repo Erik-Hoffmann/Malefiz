@@ -2,7 +2,7 @@ package malefiz.aview.gui
 
 import scalafx.scene.control.TextField
 import malefiz.aview.gui.{BoardGui, FooterButtons}
-import malefiz.controller.Controller
+import malefiz.controller.{Controller, ControllerInterface}
 import malefiz.model.Gameboard
 import malefiz.util.Observer
 import scalafx.application.JFXApp3
@@ -10,7 +10,7 @@ import scalafx.scene.layout.BorderPane
 import scalafx.scene.Scene
 import scalafx.application.Platform
 
-class GUI(con : Controller) extends JFXApp3, Observer {
+class GUI(con : ControllerInterface) extends JFXApp3, Observer {
   con.add(this)
   override def start(): Unit = {
     stage = new JFXApp3.PrimaryStage {

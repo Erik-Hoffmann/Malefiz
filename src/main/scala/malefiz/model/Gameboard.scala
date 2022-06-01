@@ -1,8 +1,8 @@
 package malefiz.model
 
-case class Gameboard(players: Int) extends GameboardTrait(players):
-  val playerList: Array[Player] = createPlayers
-  var currentPlayer: Player = playerList.last
+case class Gameboard(players: Int) extends GameboardInterface(players):
+  val eol: String = sys.props("line.separator")
+  val board: Array[Array[Ground]] = Array.ofDim[Ground](height, width)
 
   def createPlayers: Array[Player] = Array.tabulate(players) {n => new Player(Colors.fromOrdinal(n), 2+(n*4), height) }
 
@@ -31,14 +31,14 @@ case class Gameboard(players: Int) extends GameboardTrait(players):
 
   def dimensions(players: Int): (Int, Int) = (players*4+1, players*2+2)
 
-  def put(stone: Stone, x: Int, y:Int): Gameboard =
+  def put(stone: Stone, x: Int, y:Int): GameboardInterface =
     board(x)(y) = new Field(x,y,stone)
     this
 
-  def switchPos(srcPos: Option[(Int, Int)], destPos:(Int,Int)): Gameboard =
+  def switchPos(srcPos: Option[(Int, Int)], destPos:(Int,Int)): GameboardInterface =
     if(srcPos.isEmpty){
         putNewPeg(destPos)
-      return this
+        return this
     }
     val temp: Ground = getField(srcPos.get._1, srcPos.get._2)
     board(srcPos.get._1)(srcPos.get._2) = getField(destPos._1, destPos._2)
@@ -47,12 +47,12 @@ case class Gameboard(players: Int) extends GameboardTrait(players):
   
   def getField(x: Int,y: Int): Ground = board(x)(y)
 
-  private def putNewPeg(destPos :(Int,Int)): Unit = {
+  def putNewPeg(destPos :(Int,Int)): Unit = {
    currentPlayer.pegs :+= destPos
     board(destPos._1)(destPos._2) = Field(destPos._1, destPos._2, Stone.apply(Fields.Peg))
   }
 
-  def undoPutPeg(destPos :(Int, Int)): Gameboard = {
+  def undoPutPeg(destPos :(Int, Int)): GameboardInterface = {
     currentPlayer.pegs = currentPlayer.pegs.take(currentPlayer.pegs.indexOf(destPos))
     board(destPos._1)(destPos._2) = new Field(destPos._1,destPos._2, Stone.apply(Fields.FreeField))
     this
@@ -69,11 +69,11 @@ case class Gameboard(players: Int) extends GameboardTrait(players):
 
   override def toString: String = board.map(row => row.map(field => field.toString).mkString("")).mkString(eol)
 
-  def buildBoard(): Gameboard =
+  def buildBoard(): GameboardInterface =
     buildGame(board)
     this
 
-  def exampleUpdateBoard(): Gameboard =
+  def exampleUpdateBoard(): GameboardInterface =
     exampleUpdate(board)
     this
 

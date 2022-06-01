@@ -1,6 +1,6 @@
 package malefiz.aview.gui
 
-import malefiz.controller.Controller
+import malefiz.controller.{Controller, ControllerInterface}
 import malefiz.model.{Blocker, Empty, FreeField, Gameboard, Peg, Turn}
 import scalafx.event.EventIncludes.handle
 import scalafx.scene.layout.GridPane
@@ -8,10 +8,10 @@ import scalafx.scene.paint.Color
 import scalafx.scene.paint.Color.*
 import scalafx.scene.shape.{Circle, Rectangle}
 
-class BoardGui(con : Controller) extends GridPane {
+class BoardGui(con : ControllerInterface) extends GridPane {
   val container = new GridPane()
-  for (i <- 0 until con.field.board.size) {
-    for (j <- 0 until con.field.board(i).size) {
+  for (i <- 0 until con.field.height) {
+    for (j <- 0 until con.field.width) {
       if (con.field.checkEmpty(i,j)) {
         container.add(new Rectangle {
           height = 40
@@ -32,7 +32,6 @@ class BoardGui(con : Controller) extends GridPane {
     radius = 20
     fill = color
     onMouseClicked = handle{
-      println(position)
       con.put(new Turn(Option.empty, position))
     }
   }

@@ -4,13 +4,11 @@ package controller
 import util.Command
 import util.Observable
 import util.UndoManager
-import model.Gameboard
-import model.Turn
-import State._
+import model.{Gameboard, GameboardInterface, Turn}
+import State.*
 
-case class Controller(var field: Gameboard) extends Observable:
-
-  val undoManager = new UndoManager[Gameboard]
+case class Controller(board: GameboardInterface) extends ControllerInterface(board):
+  val undoManager = new UndoManager[GameboardInterface]
   var state: State = Output
   var diced: Int = 0
   field.buildBoard()

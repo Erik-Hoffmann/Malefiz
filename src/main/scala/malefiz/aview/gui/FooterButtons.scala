@@ -1,13 +1,13 @@
 package malefiz.aview.gui
 
-import malefiz.controller.Controller
+import malefiz.controller.ControllerInterface
 import scalafx.scene.control.Label
 import scalafx.scene.control.TextField
 import scalafx.event.EventIncludes.handle
 import scalafx.scene.control.Button
 import scalafx.scene.layout.{HBox, Priority}
 
-class FooterButtons(con : Controller) extends HBox {
+class FooterButtons(con : ControllerInterface) extends HBox {
   val undoButton = new UndoButton
   val redoButton = new RedoButton
   val textField = new Label {

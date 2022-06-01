@@ -1,7 +1,7 @@
 package malefiz
 package aview
 
-import controller.Controller
+import controller.ControllerInterface
 import model.Turn
 import model.Direction
 import model.Gameboard
@@ -12,31 +12,31 @@ import util.Observer
 import java.util.Scanner
 import scala.util.{Failure, Success, Try}
 
-class TUI(controller: Controller) extends Observer:
-  controller.add(this)
-  println(controller.field.toString)
+class TUI(cont: ControllerInterface) extends Observer:
+  cont.add(this)
+  println(cont.field.toString)
 
   def run(): Unit =
     doTurn()
 
-  
-  override def update(): Unit = println(controller.field.toString)
+
+  override def update(): Unit = println(cont.field.toString)
 
   def doTurn(): Unit =
     val input = readLine("Command to Execute: ")
     input match
       case "q" => System.exit(0);
-      case "p" => controller.field.playerList.foreach(p => p.pegs.foreach(pos => println(pos.toString())))
-      case "s" => controller.put(new Turn(Option.empty,inputPosition))
-      case "z" => controller.undo
-      case "r" => controller.redo()
-    
-    if controller.field.playerList.indexOf(controller.field.currentPlayer) + 1< controller.field.playerList.length
+      case "p" => cont.field.playerList.foreach(p => p.pegs.foreach(pos => println(pos.toString())))
+      case "s" => cont.put(new Turn(Option.empty,inputPosition))
+      case "z" => cont.undo
+      case "r" => cont.redo()
+
+    if cont.field.playerList.indexOf(cont.field.currentPlayer) + 1< cont.field.playerList.length
       then
-      controller.nextPlayer()
+      cont.nextPlayer()
       doTurn()
       else
-      controller.firstPlayer()
+      cont.firstPlayer()
       doTurn()
     //directionAnalyser(choosePeg(controller.currentPlayer), readLine)
 
