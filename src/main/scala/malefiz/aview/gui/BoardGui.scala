@@ -1,7 +1,8 @@
 package malefiz.aview.gui
 
-import malefiz.controller.{Controller, ControllerInterface}
-import malefiz.model.{Blocker, Empty, FreeField, Gameboard, Peg, Turn}
+import malefiz.controller.BaseImpl.{Controller, Turn}
+import malefiz.controller.ControllerInterface
+import malefiz.model.BaseImpl.{Blocker, Empty, FreeField, Gameboard, Peg}
 import scalafx.event.EventIncludes.handle
 import scalafx.scene.layout.GridPane
 import scalafx.scene.paint.Color

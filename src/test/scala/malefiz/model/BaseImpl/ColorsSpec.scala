@@ -1,6 +1,6 @@
-package malefiz.model
+package malefiz.model.BaseImpl
 
-import org.scalatest.matchers.should.Matchers._
+import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
 
 class ColorsSpec extends AnyWordSpec {

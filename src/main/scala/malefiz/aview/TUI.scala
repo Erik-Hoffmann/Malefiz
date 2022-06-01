@@ -2,9 +2,8 @@ package malefiz
 package aview
 
 import controller.ControllerInterface
-import model.Turn
-import model.Direction
-import model.Gameboard
+import malefiz.controller.BaseImpl.Turn
+import malefiz.model.BaseImpl.{Direction, Gameboard}
 
 import scala.io.StdIn.readLine
 import util.Observer

@@ -1,6 +1,7 @@
-package malefiz.model
+package malefiz.model.BaseImpl
 
-import org.scalatest.matchers.should.Matchers._
+import malefiz.model.BaseImpl.{Field, Stone}
+import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
 
 class FieldSpec extends AnyWordSpec {

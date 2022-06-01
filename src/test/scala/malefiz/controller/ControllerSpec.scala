@@ -2,7 +2,8 @@
 package malefiz
 package controller
 
-import model.{Gameboard, Turn}
+import malefiz.controller.BaseImpl.{Controller, Turn}
+import malefiz.model.BaseImpl.Gameboard
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
 import util.Observer

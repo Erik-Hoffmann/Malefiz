@@ -1,5 +1,6 @@
-package malefiz
-package model
+package malefiz.model.BaseImpl
+
+import malefiz.model.BaseImpl.Colors
 
 class Player(color: Colors, x: Int, y: Int) {
   val stoneNum = 5

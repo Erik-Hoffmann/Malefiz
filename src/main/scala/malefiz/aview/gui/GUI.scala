@@ -2,8 +2,9 @@ package malefiz.aview.gui
 
 import scalafx.scene.control.TextField
 import malefiz.aview.gui.{BoardGui, FooterButtons}
-import malefiz.controller.{Controller, ControllerInterface}
-import malefiz.model.Gameboard
+import malefiz.controller.BaseImpl.Controller
+import malefiz.controller.ControllerInterface
+import malefiz.model.BaseImpl.Gameboard
 import malefiz.util.Observer
 import scalafx.application.JFXApp3
 import scalafx.scene.layout.BorderPane

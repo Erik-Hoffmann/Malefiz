@@ -1,9 +1,11 @@
-package malefiz
-package controller
+package malefiz.controller.BaseImpl
 
-import model.{GameboardInterface, Stone, Turn}
-import util.Command
-import util.UndoManager
+import malefiz.controller.BaseImpl.Controller
+import malefiz.model.BaseImpl.Stone
+import malefiz.model.GameboardInterface
+import malefiz.util.Command
+
+import malefiz.util.{Command, UndoManager}
 
 class ExecuteTurnCommand(turn: Turn, controller: Controller) extends Command[GameboardInterface]:
   override def noStep(field: GameboardInterface): GameboardInterface = field

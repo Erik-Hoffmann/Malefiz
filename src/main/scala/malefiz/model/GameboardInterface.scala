@@ -1,5 +1,7 @@
 package malefiz.model
 
+import malefiz.model.BaseImpl.{Player, Stone}
+
 trait GameboardInterface(players: Int) {
 
   val playerList: Array[Player] = createPlayers
@@ -26,7 +28,5 @@ trait GameboardInterface(players: Int) {
   def checkFreeField(pos :(Int,Int)): Boolean
 
   //  def store(num: Int): GameboardInterface
-
-  override def toString: String
 
 }

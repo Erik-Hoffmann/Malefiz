@@ -1,6 +1,7 @@
 package malefiz.controller
 
-import malefiz.model.{GameboardInterface, Turn}
+import malefiz.controller.BaseImpl.Turn
+import malefiz.model.GameboardInterface
 import malefiz.util.Observable
 
 trait ControllerInterface(board: GameboardInterface) extends Observable {

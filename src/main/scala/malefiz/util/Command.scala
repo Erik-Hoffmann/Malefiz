@@ -1,6 +1,6 @@
 package malefiz.util
 
-import malefiz.model.Turn
+import malefiz.controller.BaseImpl.Turn
 
 trait Command[T]:
   def noStep(state: T): T
