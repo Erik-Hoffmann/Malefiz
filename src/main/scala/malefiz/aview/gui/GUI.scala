@@ -1,38 +1,32 @@
 package malefiz.aview.gui
 
+import malefiz.aview.Gui
 import scalafx.scene.control.TextField
 import malefiz.aview.gui.{BoardGui, FooterButtons}
 import malefiz.controller.BaseImpl.Controller
 import malefiz.controller.ControllerInterface
 import malefiz.model.BaseImpl.Gameboard
 import malefiz.util.Observer
-import scalafx.application.JFXApp3
 import scalafx.scene.layout.BorderPane
 import scalafx.scene.Scene
-import scalafx.application.Platform
+import scalafx.application.{JFXApp3, Platform}
+import scalafx.stage.Stage
 
-class GUI(con : ControllerInterface) extends JFXApp3, Observer {
-  con.add(this)
-  override def start(): Unit = {
-    stage = new JFXApp3.PrimaryStage {
-      title = "Malefiz"
-      scene = new Scene {
-        content = new BorderPane {
-          center = new BoardGui(con)
-          bottom = new FooterButtons(con)
-        }
+class GUI(con : ControllerInterface) extends Gui {
+  override def start: Scene = {
+    new Scene {
+      content = new BorderPane {
+        center = new BoardGui(con)
+        bottom = new FooterButtons(con)
       }
     }
   }
-  override def update(): Unit = {
-    Platform.runLater {
-      stage.scene = new Scene {
-        content = new BorderPane {
-          center = new BoardGui(con)
-          bottom = new FooterButtons(con)
-        }
+  override def update: Scene = {
+    new Scene {
+      content = new BorderPane {
+        center = new BoardGui(con)
+        bottom = new FooterButtons(con)
       }
-      stage.show()
     }
   }
 }

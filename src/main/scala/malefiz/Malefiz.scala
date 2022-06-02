@@ -1,9 +1,7 @@
 package malefiz
 
 import scala.io.StdIn.readLine
-import aview.TUI
-import aview.gui.GUI
-import malefiz.controller.BaseImpl
+import aview.{GUIStart, TUI}
 //import controller.ExecuteTurnCommand
 import malefiz.controller.BaseImpl.Controller
 import malefiz.model.BaseImpl.Gameboard
@@ -14,9 +12,9 @@ import malefiz.model.BaseImpl.Gameboard
   println("Malefiz!")
   val players = readLine("Number of Players: ").toInt
   val board = Gameboard(players)
-  val controller = BaseImpl.Controller(board)
+  val controller = Controller(board)
   val tui = TUI(controller)
-  val gui = GUI(controller)
+  val gui = new GUIStart(controller)
   val threadGui = new Thread {
     override def run: Unit = {
       gui.main(Array[String]())

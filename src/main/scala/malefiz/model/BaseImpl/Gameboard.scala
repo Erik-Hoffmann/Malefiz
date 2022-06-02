@@ -95,7 +95,6 @@ case class Gameboard(players: Int) extends GameboardInterface(players) :
 
   def checkBlocker(pos: (Int, Int)): Boolean = {
     val f: Field = getField(pos._1, pos._2).asInstanceOf[Field]
-    println(f)
     f.stone match
       case p: Blocker => true
       case _ => false
