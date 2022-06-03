@@ -7,8 +7,8 @@ lazy val root = (project in file("."))
     name := "Malefiz"
   )
 libraryDependencies += "org.scalafx" %% "scalafx" % "16.0.0-R24"
-libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.11"
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.11" % "test"
+libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.12"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.12" % "test"
 
 libraryDependencies ++= {
   // Determine OS version of JavaFX binaries

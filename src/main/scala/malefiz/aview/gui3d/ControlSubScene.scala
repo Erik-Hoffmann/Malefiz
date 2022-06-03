@@ -1,13 +1,14 @@
 package malefiz.aview.gui3d
 
 import malefiz.controller.ControllerInterface
+import scalafx.animation.FadeTransition
 import scalafx.event.EventIncludes.handle
 import scalafx.scene.control.Button
 import scalafx.scene.input.KeyCode
 import scalafx.scene.layout.{BorderPane, HBox, Priority}
 import scalafx.scene.{Group, SceneAntialiasing, SubScene}
 
-class ControlSubScene(con :ControllerInterface, box : HBox, viewPortSize :Int) extends
+class ControlSubScene(con :ControllerInterface, box : HBox, viewPortSize :Int, transition: FadeTransition, state :StateClass) extends
   SubScene(box, viewPortSize, 80, true, SceneAntialiasing.Balanced) {
   box.children = Seq()
   box.children.add(new Button {
@@ -16,7 +17,10 @@ class ControlSubScene(con :ControllerInterface, box : HBox, viewPortSize :Int) e
     hgrow = Priority.Always
     vgrow = Priority.Always
     onAction = handle {
+      state.state = State.undo
+      transition.play()
       con.undo
+
     }
   })
   box.children.add(new Button{
@@ -25,6 +29,8 @@ class ControlSubScene(con :ControllerInterface, box : HBox, viewPortSize :Int) e
     hgrow = Priority.Always
     vgrow = Priority.Always
     onAction = handle {
+      state.state = State.redo
+      transition.play()
       con.redo()
     }
   })
