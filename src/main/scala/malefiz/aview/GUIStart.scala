@@ -5,7 +5,9 @@ import scalafx.scene.control.TextField
 import scalafx.application.Platform
 import malefiz.aview.gui.GUI
 import malefiz.aview.gui3d.Gui3d
+import malefiz.controller.BaseImpl.Controller
 import malefiz.controller.ControllerInterface
+import malefiz.model.BaseImpl.Gameboard
 import malefiz.util.Observer
 import scalafx.application.JFXApp3
 import scalafx.event.EventIncludes.handle
