@@ -40,7 +40,7 @@ class ControllerSpec extends AnyWordSpec {
         " □           □ " + eol +
         " □  □  □  □  □ "
       )
-      controller.undo
+      controller.undo()
       controller.field.toString should be(
         " \uE008     □       " + eol +
         " □  □  □  □  □ " + eol +

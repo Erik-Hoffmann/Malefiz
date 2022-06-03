@@ -22,7 +22,7 @@ class FooterButtons(con : ControllerInterface) extends HBox {
     maxWidth = Double.MaxValue
     hgrow = Priority.Always
     onAction = handle {
-      con.undo
+      con.undo()
     }
   }
   class RedoButton extends Button {

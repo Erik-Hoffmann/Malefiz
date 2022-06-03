@@ -11,7 +11,7 @@ trait ControllerInterface(board: GameboardInterface) extends Observable {
   def nextPlayer(): Unit
   def firstPlayer(): Unit
   def put(turn: Turn): Unit
-  def undo: Unit
+  def undo(): Unit
   def redo(): Unit
   def dice():Unit
 }

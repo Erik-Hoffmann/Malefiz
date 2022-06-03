@@ -32,7 +32,7 @@ case class Controller(board: GameboardInterface) extends ControllerInterface(boa
     undoManager.doStep(field, ExecuteTurnCommand(turn, this))
     notifyObservers()
 
-  def undo: Unit =
+  def undo(): Unit =
     field = undoManager.undoStep(field)
     notifyObservers()
 

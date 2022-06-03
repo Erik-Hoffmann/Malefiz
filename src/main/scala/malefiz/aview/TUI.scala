@@ -27,7 +27,7 @@ class TUI(cont: ControllerInterface) extends Observer:
       case "q" => System.exit(0);
       case "p" => cont.field.playerList.foreach(p => p.pegs.foreach(pos => println(pos.toString())))
       case "s" => cont.put(new Turn(Option.empty,inputPosition))
-      case "z" => cont.undo
+      case "z" => cont.undo()
       case "r" => cont.redo()
 
     if cont.field.playerList.indexOf(cont.field.currentPlayer) + 1< cont.field.playerList.length

@@ -19,8 +19,7 @@ class ControlSubScene(con :ControllerInterface, box : HBox, viewPortSize :Int, t
     onAction = handle {
       state.state = State.undo
       transition.play()
-      con.undo
-
+      con.undo()
     }
   })
   box.children.add(new Button{
