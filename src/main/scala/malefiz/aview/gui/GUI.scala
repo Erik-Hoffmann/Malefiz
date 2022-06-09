@@ -13,14 +13,6 @@ import scalafx.application.{JFXApp3, Platform}
 import scalafx.stage.Stage
 
 class GUI(con : ControllerInterface) extends Gui {
-  override def start: Scene = {
-    new Scene {
-      content = new BorderPane {
-        center = new BoardGui(con)
-        bottom = new FooterButtons(con)
-      }
-    }
-  }
   override def update: Scene = {
     new Scene {
       content = new BorderPane {

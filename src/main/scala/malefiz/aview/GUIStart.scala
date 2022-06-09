@@ -32,14 +32,14 @@ class GUIStart(con : ControllerInterface) extends JFXApp3, Observer{
                 text = "2D"
                 onAction = handle {
                   gui = new GUI(con)
-                  stage.scene = gui.start
+                  stage.scene = gui.update
                 }
               },
               new Button {
                 text = "3D"
                 onAction = handle {
                   gui = new Gui3d(con)
-                  stage.scene = gui.start
+                  stage.scene = gui.update
                 }
               }
             )
