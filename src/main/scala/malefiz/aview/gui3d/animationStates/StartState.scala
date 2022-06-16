@@ -10,6 +10,8 @@ class StartState  extends AnimationState{
   override def playAfter(gui: Gui3d): Unit = {
     rotateCamera(gui)
     gui.cameraBody.getTransforms().add(new Rotate(330, Rotate.XAxis))
+    gui.textContainer.text = "set new Peg"
+    gui.guiState = new SetState
   }
   def rotateCamera(gui: Gui3d): Unit = {
     new RotateTransition {

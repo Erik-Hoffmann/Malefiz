@@ -8,26 +8,46 @@ import malefiz.util.UndoManager
 case class Controller(board: GameboardInterface) extends ControllerInterface(board) :
   val undoManager = new UndoManager[GameboardInterface]
   var state: State = Output
-  var diced: Int = 0
+  dice()
   field.buildBoard()
 
-  def nextPlayer(): Unit = field.currentPlayer = field.playerList(field.playerList.indexOf(field.currentPlayer) + 1)
+  def nextPlayer(): Unit = {
+    if (field.playerList.indexOf(field.currentPlayer) + 1 == field.playerList.length) {
+      firstPlayer();
+    }else {
+      field.currentPlayer = field.playerList(field.playerList.indexOf(field.currentPlayer) + 1)
+    }
+  }
 
   def firstPlayer(): Unit =
     field.currentPlayer = field.playerList(0)
 
-  /*
-  def doAndPublish(doThis: Int => Gameboard, turn: Turn): Unit =
-//    field = doThis(turn)
-    notifyObservers()
+  def legalMove (turn: Turn): Boolean = {
+    return !board.legalMove(turn.srcPos.get, turn.destPos, diced);
+  }
 
-  def doAndPublish(doThis: => Gameboard): Unit =
-    field = doThis
+  def movePeg(turn: Turn): Unit = {
+    diced = diced -1;
+    field.currentPlayer.pegs.remove(field.currentPlayer.pegs.indexOf(turn.srcPos.get))
+    field.currentPlayer.pegs :+= turn.destPos;
+    if(diced == 0){
+      if(board.checkBlocker(turn.destPos)){
+        undoManager.doStep(field, ExecuteTurnCommand(turn, this));
+        board.removeBlocker(turn.srcPos.get)
+      }else if (board.checkPeg(turn.destPos)){
+        undoManager.doStep(field, ExecuteTurnCommand(turn, this));
+        board.sendPegHome(turn.srcPos.get)
+      } else  {
+        undoManager.doStep(field, ExecuteTurnCommand(turn, this));
+        nextPlayer();
+        dice();
+      }
+    } else {
+      undoManager.doStep(field, ExecuteTurnCommand(turn, this));
+    }
     notifyObservers()
-
-  def doAndPublish(): Unit =
-    notifyObservers()
-*/
+  }
+  
   def put(turn: Turn): Unit =
     undoManager.doStep(field, ExecuteTurnCommand(turn, this))
     notifyObservers()

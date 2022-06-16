@@ -8,7 +8,6 @@ import scalafx.util.Duration
 
 class UndoRedoState extends AnimationState {
   override def playAfter(gui: Gui3d): Unit = {
-    println(gui.cameraBody)
     fadeIn(gui)
   }
   def fadeIn(gui: Gui3d): Unit = {

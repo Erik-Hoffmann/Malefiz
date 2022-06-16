@@ -60,6 +60,30 @@ case class Gameboard(players: Int) extends GameboardInterface(players) :
     this
   }
 
+  def legalMove(src: (Int, Int), dest: (Int,Int), countMoves: Int): Boolean = {
+    if (checkEmpty(dest)) {
+      return false
+    } else if (checkBlocker(dest) && countMoves != 0){
+      return false
+   }
+    true
+  }
+  
+  def removeBlocker(pos: (Int,Int)): GameboardInterface = {
+    board (pos._1)(pos._2) = Field(pos._1, pos._2, Stone.apply(Fields.FreeField))
+    this
+  }
+
+  def sendPegHome(pos: (Int,Int)): GameboardInterface = {
+    for(p <- playerList) {
+      for (i <- p.pegs){
+        if (pos.equals(i)) {
+          p.pegs.remove(p.pegs.indexOf(i))
+        }
+      }
+    }
+    this
+  }
   //  def movePeg(oldField: Field, newField: Field): Array[Array[Ground]] =
   //    put(oldField.x, oldField.y, Stone(Fields.FreeField))
   //    put(newField.x, newField.y)

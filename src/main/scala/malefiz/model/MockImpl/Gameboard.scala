@@ -17,6 +17,9 @@ class Gameboard(players : Int) extends GameboardInterface(players){
   def switchPos(srcPos: Option[(Int, Int)], destPos:(Int,Int)): GameboardInterface = this
   def undoPutPeg(destPos :(Int, Int)): GameboardInterface = this
   def exampleUpdateBoard(): GameboardInterface = this
+  def legalMove(src:(Int,Int), dest: (Int,Int), countMoves: Int): Boolean = false
+  def removeBlocker(pos :(Int,Int)): GameboardInterface = this
+  def sendPegHome(pos: (Int, Int)): GameboardInterface = this
   def checkPeg(pos :(Int,Int)): Boolean = false
   def checkEmpty(pos :(Int,Int)): Boolean = false
   def checkBlocker(pos :(Int,Int)): Boolean = false

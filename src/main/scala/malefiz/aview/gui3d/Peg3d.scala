@@ -9,10 +9,12 @@ import scalafx.scene.paint.{Color, PhongMaterial}
 import scalafx.scene.shape.{DrawMode, MeshView, TriangleMesh}
 import scalafx.scene.transform.Rotate
 
-class Peg3d extends MeshView(new TriangleMesh(delegate = FXMLLoader.load(getClass.getResource("/Models/CowboyPeg.fxml")))) {
+class Peg3d(posX: Int, posY: Int) extends MeshView(new TriangleMesh(delegate = FXMLLoader.load(getClass.getResource("/Models/CowboyPeg.fxml")))) {
   scaleX = 19
   scaleY = 19
   scaleZ = 19
+  var posx = posX
+  var posy = posY
   cullFace = CullFace.None
   drawMode = DrawMode.Fill
   def color: Color = Red

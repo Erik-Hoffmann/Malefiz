@@ -1,12 +1,14 @@
 package malefiz.aview.gui3d
 
+import scalafx.scene.control.TextField
 import malefiz.aview.gui3d.animationStates.UndoRedoState
+import malefiz.controller.BaseImpl.Turn
 import malefiz.controller.ControllerInterface
 import scalafx.animation.FadeTransition
 import scalafx.event.EventIncludes.handle
 import scalafx.scene.control.Button
 import scalafx.scene.input.KeyCode
-import scalafx.scene.layout.{BorderPane, HBox, Priority}
+import scalafx.scene.layout.{BorderPane, HBox, Priority, VBox}
 import scalafx.scene.{Group, SceneAntialiasing, SubScene}
 
 class ControlSubScene(con :ControllerInterface, box : HBox, viewPortSize :Int,  gui: Gui3d) extends
@@ -36,6 +38,17 @@ class ControlSubScene(con :ControllerInterface, box : HBox, viewPortSize :Int,  
       con.redo()
     }
   })
+  box.getChildren.add(new VBox{
+    this.children = Seq()
+    this.children.add(new TextField {
+      text = "Current Turn: Player " + (con.field.playerList.indexOf(con.field.currentPlayer) +1)
+    })
+    this.children.add(new TextField {
+      text = "Move count: " + con.diced
+    })
+    this.children.add(gui.textContainer)
+
+  })
   box.children.add(new BorderPane{
     hgrow = Priority.Always
     vgrow = Priority.Always
@@ -44,7 +57,21 @@ class ControlSubScene(con :ControllerInterface, box : HBox, viewPortSize :Int,  
       text = "Up"
       maxWidth = Double.MaxValue
       onAction = handle {
-
+        if (!gui.choosenPeg.isEmpty) {
+          val src = (gui.choosenPeg.get.posx, gui.choosenPeg.get.posy)
+          val dest = (gui.choosenPeg.get.posx-1, gui.choosenPeg.get.posy)
+          val turn = Turn(Option.apply(src), dest)
+          if(!con.legalMove(turn)) {
+            gui.choosenPeg.get.posx = gui.choosenPeg.get.posx -1
+            if(con.diced == 1) {
+              gui.moved = false
+              gui.choosenPeg = None
+            }
+            con.movePeg(Turn(Option.apply(src), dest))
+          }else {
+            gui.textContainer.text = "Illegal Move";
+          }
+        }
       }
     }
     center = new HBox {
@@ -59,6 +86,21 @@ class ControlSubScene(con :ControllerInterface, box : HBox, viewPortSize :Int,  
         this.vgrow = Priority.Always
         onAction = handle {
 
+          if (!gui.choosenPeg.isEmpty) {
+            val src = (gui.choosenPeg.get.posx, gui.choosenPeg.get.posy)
+            val dest = (gui.choosenPeg.get.posx, gui.choosenPeg.get.posy-1)
+            val turn = Turn(Option.apply(src), dest)
+            if(!con.legalMove(turn)) {
+              gui.choosenPeg.get.posy = gui.choosenPeg.get.posy -1
+              if(con.diced == 1) {
+                gui.moved = false
+                gui.choosenPeg = None
+              }
+              con.movePeg(Turn(Option.apply(src), dest))
+            }else {
+              gui.textContainer.text = "Illegal Move";
+            }
+          }
         }
       })
       this.children.add(new Button {
@@ -68,7 +110,21 @@ class ControlSubScene(con :ControllerInterface, box : HBox, viewPortSize :Int,  
         this.hgrow = Priority.Always
         this.vgrow = Priority.Always
         onAction = handle {
-
+          if (!gui.choosenPeg.isEmpty) {
+            val src = (gui.choosenPeg.get.posx, gui.choosenPeg.get.posy)
+            val dest = (gui.choosenPeg.get.posx, gui.choosenPeg.get.posy +1)
+            val turn = Turn(Option.apply(src), dest)
+            if(!con.legalMove(turn)) {
+              gui.choosenPeg.get.posy = gui.choosenPeg.get.posy +1
+              if(con.diced == 1) {
+                gui.moved = false
+                gui.choosenPeg = None
+              }
+              con.movePeg(Turn(Option.apply(src), dest))
+            }else {
+              gui.textContainer.text = "Illegal Move";
+            }
+          }
         }
       })
     }
@@ -79,9 +135,24 @@ class ControlSubScene(con :ControllerInterface, box : HBox, viewPortSize :Int,  
       hgrow = Priority.Always
       vgrow = Priority.Always
       onAction = handle {
-
+        /*
+        if (!gui.choosenPeg.isEmpty) {
+          val src = (gui.choosenPeg.get.posx, gui.choosenPeg.get.posy)
+          val dest = (gui.choosenPeg.get.posx +1, gui.choosenPeg.get.posy)
+          val turn = Turn(Option.apply(src), dest)
+          if(!con.legalMove(turn)) {
+            gui.choosenPeg.get.posx = gui.choosenPeg.get.posx +1
+            if(con.diced == 1) {
+              gui.moved = false
+              gui.choosenPeg = None
+            }
+            con.movePeg(Turn(Option.apply(src), dest))
+          }else {
+            gui.textContainer.text = "Illegal Move";
+          }
+        }
+        */
       }
     }
   })
-
 }

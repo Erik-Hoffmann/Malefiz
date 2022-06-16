@@ -6,21 +6,23 @@ import scalafx.scene.layout.BackgroundImage
 import scalafx.scene.image
 import scalafx.animation.FadeTransition
 import malefiz.aview.Gui
-import malefiz.aview.gui3d.animationStates.{AnimationState, SetState, StartState}
+import malefiz.aview.gui3d.animationStates.{AnimationState, ChooseState, MoveState, SetState, StartState}
 import malefiz.controller.BaseImpl.Turn
 import malefiz.controller.ControllerInterface
+import malefiz.model.BaseImpl.Colors
 import scalafx.Includes.*
 import scalafx.animation.{Animation, RotateTransition, Transition}
 import scalafx.application.JFXApp3
 import scalafx.beans.binding.Bindings
 import scalafx.event.EventIncludes.handle
 import scalafx.geometry.Point3D
-import scalafx.scene.control.{Button, CheckBox}
+import scalafx.scene.control.{Button, CheckBox, TextField}
 import scalafx.scene.layout.{BorderPane, GridPane, HBox, Priority, VBox}
 import scalafx.scene.paint.{Color, PhongMaterial}
-import scalafx.scene.paint.Color.{Beige, Black, Blue, Cyan, DarkGray, Red, Transparent, White}
+import scalafx.scene.paint.Color.{Beige, Black, Blue, Cyan, DarkGray, Green, Magenta, Red, Transparent, White, Yellow}
 import scalafx.scene.shape.*
 import scalafx.scene.*
+import scalafx.scene.effect.{DropShadow, Glow}
 import scalafx.scene.input.{KeyCode, ScrollEvent}
 import scalafx.scene.transform.Rotate
 import scalafx.stage.Stage
@@ -32,15 +34,19 @@ class Gui3d(con : ControllerInterface) extends Gui {
   val SCALE = 1
   val boxSize = 40
   val boxDepth = 30
+  var choosenPeg :Option[Peg3d] = None
   var cameraBody = new PerspectiveCamera()
   val imgView = new ImageView(getClass.getResource("/background-old-paper.jpg").toString)
   var guiState: AnimationState = new StartState()
   var subScene = getBoard3d()
+  var moved = false
+  val textContainer = new TextField {
+    text = "choose direction"
+  }
   var gui = this
 
   override def update: Scene = {
     cameraBody = new PerspectiveCamera()
-    println(cameraBody)
     new Scene {
       fill = Black
       subScene = getBoard3d()
@@ -94,11 +100,30 @@ class Gui3d(con : ControllerInterface) extends Gui {
             translateX = i * boxSize
             translateY = j * boxSize
           })
-          group.getChildren.add(new Peg3d {
+          group.getChildren.add(new Peg3d(i,j) {
             x = i * boxSize
             y = j * boxSize
             z = 0
-            color = Red
+            this.onMouseClicked =  handle {
+              if (con.field.currentPlayer.pegs.contains((i, j))) {
+                if (!choosenPeg.isEmpty) {
+                  choosenPeg.get.color = mapColor(con.field.currentPlayer.colour)
+                }
+                choosenPeg = Option.apply(this)
+                choosenPeg.get.color = Color.DeepPink
+                textContainer.text = "Move Peg to Position"
+              }
+            }
+            if(!choosenPeg.isEmpty && choosenPeg.get.posx == i && choosenPeg.get.posy == j ){
+              color = Color.DeepPink
+              moved = true
+            } else {
+              for (p <- con.field.playerList) {
+                if(p.pegs.contains(i,j)){
+                  color = mapColor(p.colour);
+                }
+              }
+            }
           })
         }
       }
@@ -106,7 +131,6 @@ class Gui3d(con : ControllerInterface) extends Gui {
     setUpCamera()
     subScene.camera = cameraBody
     subScene.fill = Beige
-    subScene.onKeyPressed = (event: KeyEvent) => changeDirection(imgView, event.code)
     subScene
   }
   def setUpCamera(): Unit = {
@@ -116,8 +140,6 @@ class Gui3d(con : ControllerInterface) extends Gui {
     cameraBody.translateZ = con.field.playerList.length*30
     cameraBody.translateX = -((VIEWPORT_SIZE * 9.0 / 16) - con.field.height*40)/2
     cameraBody.translateY = -20 -(VIEWPORT_SIZE - con.field.width*40)/2
-    println(-((VIEWPORT_SIZE * 9.0 / 16) - con.field.height*40)/2)
-    println(-(VIEWPORT_SIZE - con.field.width*40)/2)
     if(con.field.playerList.length >= 6) {
       cameraBody.translateX = cameraBody.translateX.value + 150
     }
@@ -137,24 +159,18 @@ class Gui3d(con : ControllerInterface) extends Gui {
     imgView.translateX = -20 -(con.field.playerList.length * 40)
   }
 
-  def changeDirection(camera: ImageView, keyCode: KeyCode): Unit ={
-    println(keyCode)
-    keyCode match {
-      case KeyCode.Up =>
-        camera.translateX = camera.translateX.value +10
-        println("X: " + camera.translateX.value)
-      case KeyCode.Right =>
-        camera.translateY = camera.translateY.value +10
-        println("Y: " + camera.translateY.value)
-      case KeyCode.Left =>
-        camera.translateY = camera.translateY.value -10
-        println("Y: " + camera.translateY.value)
-      case KeyCode.Down =>
-        camera.translateX = camera.translateX.value - 10
-        println("X: " + camera.translateX.value)
+  def mapColor(c: Colors): Color = {
+    c match {
+      case Colors.red => Red
+      case Colors.blue => Blue
+      case Colors.magenta =>Magenta
+      case Colors.cyan => Cyan
+      case Colors.green =>Green
+      case Colors.yellow => Yellow
+      case Colors.default => Black
     }
   }
-
+  
   class BoardCylinder(x: Int, y: Int) extends Cylinder {
     scaleX = SCALE
     scaleY = SCALE
