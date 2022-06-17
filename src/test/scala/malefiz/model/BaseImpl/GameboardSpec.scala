@@ -1,6 +1,7 @@
-package malefiz.model.BaseImpl
+package malefiz
+package model.BaseImpl
 
-import malefiz.model.BaseImpl.{Gameboard, Stone}
+import model.BaseImpl.{Gameboard, Stone}
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.matchers.BeMatcher.*
 import org.scalatest.wordspec.AnyWordSpec

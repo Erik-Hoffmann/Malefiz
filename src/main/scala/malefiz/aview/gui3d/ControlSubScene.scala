@@ -1,9 +1,12 @@
-package malefiz.aview.gui3d
+package malefiz
+package aview.gui3d
 
+import aview.gui3d.animationStates.UndoRedoState
+import controller.ControllerInterface
 import scalafx.scene.control.TextField
-import malefiz.aview.gui3d.animationStates.UndoRedoState
-import malefiz.controller.BaseImpl.Turn
-import malefiz.controller.ControllerInterface
+import aview.gui3d.animationStates.UndoRedoState
+import controller.BaseImpl.Turn
+import controller.ControllerInterface
 import scalafx.animation.FadeTransition
 import scalafx.event.EventIncludes.handle
 import scalafx.scene.control.Button

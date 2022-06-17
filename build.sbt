@@ -9,8 +9,12 @@ lazy val root = (project in file("."))
 libraryDependencies += "org.scalafx" %% "scalafx" % "16.0.0-R24"
 libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.12"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.12" % "test"
-libraryDependencies += "com.google.inject" % "guice" % "5.1.0"
-libraryDependencies += "net.codingwell" %% "scala-guice" % "5.1.0"
+
+libraryDependencies += "com.google.inject.extensions" % "guice-assistedinject" % "5.1.0"
+libraryDependencies += ( "net.codingwell" %% "scala-guice" % "5.0.2" ).cross( CrossVersion.for3Use2_13 )
+//libraryDependencies += "com.github.yakivy" %% "jam-core" % "0.1.0"
+//libraryDependencies += "com.softwaremill.macwire" %% "macros" % "2.5.7" % "provided"
+
 
 libraryDependencies ++= {
   // Determine OS version of JavaFX binaries

@@ -1,6 +1,7 @@
-package malefiz.model.BaseImpl
+package malefiz
+package model.BaseImpl
 
-import malefiz.model.BaseImpl.Direction
+import model.BaseImpl.Direction
 
 enum Direction(display: String):
   override def toString: String = display

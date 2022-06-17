@@ -1,4 +1,5 @@
-package malefiz.util
+package malefiz
+package util
 
 import org.scalatest.matchers.should.Matchers._
 import org.scalatest.wordspec.AnyWordSpec

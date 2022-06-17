@@ -1,6 +1,7 @@
-package malefiz.model.BaseImpl
+package malefiz
+package model.BaseImpl
 
-import malefiz.model.*
+import model.*
 
 abstract class Stone(sort: String):
   def isFree: Boolean = false

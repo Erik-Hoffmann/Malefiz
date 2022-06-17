@@ -1,7 +1,8 @@
-package malefiz.aview.gui3d.animationStates
+package malefiz
+package aview.gui3d.animationStates
 
-import malefiz.controller.BaseImpl.Turn
-import malefiz.aview.gui3d.Gui3d
+import controller.BaseImpl.Turn
+import aview.gui3d.Gui3d
 
 class MoveState() extends AnimationState {
 

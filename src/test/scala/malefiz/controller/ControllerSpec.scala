@@ -2,8 +2,8 @@
 package malefiz
 package controller
 
-import malefiz.controller.BaseImpl.{Controller, Turn}
-import malefiz.model.BaseImpl.Gameboard
+import controller.BaseImpl.{Controller, Turn}
+import model.BaseImpl.Gameboard
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
 import util.Observer
@@ -12,9 +12,9 @@ class ControllerSpec extends AnyWordSpec {
   val eol: String = sys.props("line.separator")
   "The Controller" should {
 
-    val controller = Controller(new Gameboard(1))
+    val controller = Controller(Gameboard(1))
     "put a stone on the field when a move is made" in {
-      controller.put(new Turn(Option.empty, (0,0)))
+      controller.put(Turn(Option.empty, (0,0)))
       controller.field.toString should be(
       "      □       " + eol +
       " □  □  □  □  □ " + eol +
@@ -29,11 +29,11 @@ class ControllerSpec extends AnyWordSpec {
         override def update(): Unit = bing = true
       val testObserver = TestObserver(controller)
       testObserver.bing should be(false)
-      controller.put(new Turn(Option.empty, (0,0)))
+      controller.put(Turn(Option.empty, (0,0)))
       testObserver.bing should be(true)
     }
     "undo and redo a move" in {
-      controller.put(new Turn(Option.empty, (1,0)))
+      controller.put(Turn(Option.empty, (1,0)))
       controller.field.toString should be(
         " \uE008     □       " + eol +
         " \uE008  □  □  □  □ " + eol +
@@ -55,12 +55,12 @@ class ControllerSpec extends AnyWordSpec {
           " □  □  □  □  □ "
       )
     }
-    val con = new Controller(new Gameboard((4)))
+    val con = Controller(Gameboard(4))
     "change to first player" in {
       con.firstPlayer()
       con.field.currentPlayer should be(con.field.playerList(0))
     }
-    con.put(new Turn(Option.empty,(0,0)))
+    con.put(Turn(Option.empty,(0,0)))
     "change to next Player" in {
       con.nextPlayer()
       con.field.currentPlayer.pegs.length should be(0)

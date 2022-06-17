@@ -1,4 +1,5 @@
-package malefiz.model.BaseImpl
+package malefiz
+package model.BaseImpl
 
 case class Field(x: Int, y: Int, stone: Stone) extends Ground() :
   def isFree: Boolean = stone.isFree

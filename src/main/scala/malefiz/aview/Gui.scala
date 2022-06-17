@@ -1,4 +1,5 @@
-package malefiz.aview
+package malefiz
+package aview
 
 import scalafx.scene.Scene
 

@@ -1,4 +1,5 @@
-package malefiz.aview.gui3d
+package malefiz
+package aview.gui3d
 
 
 import javafx.fxml.FXMLLoader
@@ -13,8 +14,8 @@ class Peg3d(posX: Int, posY: Int) extends MeshView(new TriangleMesh(delegate = F
   scaleX = 19
   scaleY = 19
   scaleZ = 19
-  var posx = posX
-  var posy = posY
+  var posx: Int = posX
+  var posy: Int = posY
   cullFace = CullFace.None
   drawMode = DrawMode.Fill
   def color: Color = Red
@@ -33,6 +34,6 @@ class Peg3d(posX: Int, posY: Int) extends MeshView(new TriangleMesh(delegate = F
   def y_=(d :Double): Unit = {
     translateY = d -33
   }
-  this.getTransforms().add(new Rotate(270, Rotate.XAxis))
-  this.getTransforms().add(new Rotate(270, Rotate.YAxis))
+  this.getTransforms.add(new Rotate(270, Rotate.XAxis))
+  this.getTransforms.add(new Rotate(270, Rotate.YAxis))
 }

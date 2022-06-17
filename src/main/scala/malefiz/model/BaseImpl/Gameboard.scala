@@ -1,6 +1,7 @@
-package malefiz.model.BaseImpl
+package malefiz
+package model.BaseImpl
 
-import malefiz.model.*
+import model.*
 
 case class Gameboard(players: Int) extends GameboardInterface(players) :
   val eol: String = sys.props("line.separator")
@@ -34,7 +35,7 @@ case class Gameboard(players: Int) extends GameboardInterface(players) :
   def dimensions(players: Int): (Int, Int) = (players * 4 + 1, players * 2 + 2)
 
   def put(stone: Stone, x: Int, y: Int): GameboardInterface =
-    board(x)(y) = new Field(x, y, stone)
+    board(x)(y) = Field(x, y, stone)
     this
 
   def switchPos(srcPos: Option[(Int, Int)], destPos: (Int, Int)): GameboardInterface =
@@ -56,7 +57,7 @@ case class Gameboard(players: Int) extends GameboardInterface(players) :
 
   def undoPutPeg(destPos: (Int, Int)): GameboardInterface = {
     currentPlayer.pegs = currentPlayer.pegs.take(currentPlayer.pegs.indexOf(destPos))
-    board(destPos._1)(destPos._2) = new Field(destPos._1, destPos._2, Stone.apply(Fields.FreeField))
+    board(destPos._1)(destPos._2) = Field(destPos._1, destPos._2, Stone.apply(Fields.FreeField))
     this
   }
 

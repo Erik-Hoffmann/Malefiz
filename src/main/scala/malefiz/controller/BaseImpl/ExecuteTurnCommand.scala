@@ -1,11 +1,12 @@
-package malefiz.controller.BaseImpl
+package malefiz
+package controller.BaseImpl
 
-import malefiz.controller.BaseImpl.Controller
-import malefiz.model.BaseImpl.Stone
-import malefiz.model.GameboardInterface
-import malefiz.util.Command
+import controller.BaseImpl.Controller
+import model.BaseImpl.Stone
+import model.GameboardInterface
+import util.Command
 
-import malefiz.util.{Command, UndoManager}
+import util.{Command, UndoManager}
 
 class ExecuteTurnCommand(turn: Turn, controller: Controller) extends Command[GameboardInterface]:
   override def noStep(field: GameboardInterface): GameboardInterface = field
@@ -18,8 +19,9 @@ class ExecuteTurnCommand(turn: Turn, controller: Controller) extends Command[Gam
       field.currentPlayer = field.playerList(field.playerList.indexOf(field.currentPlayer)-1)
     }
     if(turn.srcPos.isEmpty) {
-      return controller.field.undoPutPeg(turn.destPos)
+      controller.field.undoPutPeg(turn.destPos)
+    } else {
+      controller.field.switchPos(Option.apply(turn.destPos), turn.srcPos.get)
     }
-    return controller.field.switchPos(Option.apply(turn.destPos), turn.srcPos.get)
   }
   override def redoStep(field: GameboardInterface ): GameboardInterface = controller.field.switchPos(turn.srcPos, turn.destPos)

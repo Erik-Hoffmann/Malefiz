@@ -1,6 +1,7 @@
-package malefiz.aview.gui3d.animationStates
+package malefiz
+package aview.gui3d.animationStates
 
-import malefiz.aview.gui3d.Gui3d
+import aview.gui3d.Gui3d
 
 abstract class AnimationState {
  def playBefore(gui :Gui3d): Unit

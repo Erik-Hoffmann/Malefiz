@@ -1,4 +1,5 @@
-package malefiz.controller.BaseImpl
+package malefiz
+package controller.BaseImpl
 
 enum State(display: String):
   override def toString: String = display

@@ -1,6 +1,7 @@
-package malefiz.model
+package malefiz
+package model
 
-import malefiz.model.BaseImpl.{Player, Stone}
+import model.BaseImpl.{Player, Stone}
 
 trait GameboardInterface(players: Int) {
 

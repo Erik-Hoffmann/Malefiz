@@ -2,8 +2,8 @@ package malefiz
 package aview
 
 import controller.ControllerInterface
-import malefiz.controller.BaseImpl.Turn
-import malefiz.model.BaseImpl.{Direction, Gameboard}
+import controller.BaseImpl.Turn
+import model.BaseImpl.{Direction, Gameboard}
 
 import scala.io.StdIn.readLine
 import util.Observer
@@ -26,7 +26,7 @@ class TUI(cont: ControllerInterface) extends Observer:
     input match
       case "q" => System.exit(0);
       case "p" => cont.field.playerList.foreach(p => p.pegs.foreach(pos => println(pos.toString())))
-      case "s" => cont.put(new Turn(Option.empty,inputPosition))
+      case "s" => cont.put(Turn(Option.empty,inputPosition))
       case "z" => cont.undo()
       case "r" => cont.redo()
 
@@ -68,6 +68,6 @@ class TUI(cont: ControllerInterface) extends Observer:
       val sc = new Scanner(System.in)
       val pos1 = readLine("Position for Peg x: ").toInt
       val pos2 = readLine("y: ").toInt
-      return (pos1,pos2)
+      (pos1,pos2)
     }
   def validateNumber(x: String): Try[Int] = Try { x.toInt } // Try Monad ?

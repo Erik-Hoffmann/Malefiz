@@ -1,8 +1,9 @@
-package malefiz.model.MockImpl
+package malefiz
+package model.MockImpl
 
-import malefiz.model.BaseImpl.{Player, Stone}
-import malefiz.model.GameboardInterface
-import malefiz.model.BaseImpl.Colors
+import model.BaseImpl.{Player, Stone}
+import model.GameboardInterface
+import model.BaseImpl.Colors
 
 class Gameboard(players : Int) extends GameboardInterface(players){
 

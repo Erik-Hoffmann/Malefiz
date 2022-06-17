@@ -1,4 +1,5 @@
-package malefiz.model.BaseImpl
+package malefiz
+package model.BaseImpl
 
 enum Colors(display: String):
   override def toString: String = display

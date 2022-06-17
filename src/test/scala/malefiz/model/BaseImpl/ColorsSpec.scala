@@ -1,4 +1,5 @@
-package malefiz.model.BaseImpl
+package malefiz
+package model.BaseImpl
 
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec

@@ -1,15 +1,16 @@
-package malefiz.aview.gui3d
+package malefiz
+package aview.gui3d
 
 import scalafx.scene.input.KeyEvent
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.BackgroundImage
 import scalafx.scene.image
 import scalafx.animation.FadeTransition
-import malefiz.aview.Gui
-import malefiz.aview.gui3d.animationStates.{AnimationState, ChooseState, MoveState, SetState, StartState}
-import malefiz.controller.BaseImpl.Turn
-import malefiz.controller.ControllerInterface
-import malefiz.model.BaseImpl.Colors
+import aview.Gui
+import aview.gui3d.animationStates.{AnimationState, SetState, StartState}
+import controller.BaseImpl.Turn
+import controller.ControllerInterface
+import model.BaseImpl.Colors
 import scalafx.Includes.*
 import scalafx.animation.{Animation, RotateTransition, Transition}
 import scalafx.application.JFXApp3
@@ -170,7 +171,7 @@ class Gui3d(con : ControllerInterface) extends Gui {
       case Colors.default => Black
     }
   }
-  
+
   class BoardCylinder(x: Int, y: Int) extends Cylinder {
     scaleX = SCALE
     scaleY = SCALE
