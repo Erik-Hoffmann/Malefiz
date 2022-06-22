@@ -1,36 +1,34 @@
 package malefiz
 
-import scala.io.StdIn.readLine
-import aview.{GUIStart, TUI}
-import controller.ControllerInterface
-//import controller.ExecuteTurnCommand
-import controller.BaseImpl.Controller
-import model.BaseImpl.Gameboard
-import model.GameboardInterface
-
 import com.google.inject.{Guice, Injector}
-import javax.inject.Inject
+import malefiz.aview.TUI
+import malefiz.controller.ControllerInterface
+import malefiz.controller.Controller
+import malefiz.model.GameBoardInterface
+import malefiz.model.GameBoard
+
+import scala.io.StdIn.readLine
 
 object Malefiz {
 
-@main def start(): Unit =
-  val inject:Injector = Guice.createInjector(new GameModule)
-  val eol: String = System.getProperty("line.separator")
-  println("Malefiz!")
+  @main def start(): Unit =
+//    val inject:Injector = Guice.createInjector(new GameModule)
+    val eol: String = System.getProperty("line.separator")
+    println("Malefiz!")
 
-  val players: Int = readLine("Number of Players: ").toInt
-  lazy val board: GameboardInterface = inject.getInstance(classOf[Gameboard])
-  lazy val controller: ControllerInterface = inject.getInstance(classOf[Controller])
-  lazy val tui = inject.getInstance(classOf[TUI])
-  lazy val gui = inject.getInstance(classOf[GUIStart])
-  val threadGui = new Thread {
-    override def run(): Unit = {
-      gui.main(Array[String]())
-    }
-  }
-  threadGui.start()
-  tui.run()
+    val players: Int = readLine("Number of Players: ").toInt
+//    lazy val board: GameBoardInterface = inject.getInstance(classOf[GameBoard])
+//    lazy val controller: ControllerInterface = inject.getInstance(classOf[Controller])
+//    lazy val tui = inject.getInstance(classOf[TUI])
+      val controller: ControllerInterface = Controller(players)
+      val tui = TUI(controller)
+
+//    lazy val gui = inject.getInstance(classOf[GUIStart])
+//    val threadGui = new Thread {
+//      override def run(): Unit = {
+//        gui.main(Array[String]())
+//      }
+//    }
+//    threadGui.start()
+    tui.run()
 }
-
-
-

@@ -1,14 +1,13 @@
 package malefiz
 
-import model.BaseImpl.Gameboard
-import model.GameboardInterface
-import controller.ControllerInterface
-import controller.BaseImpl.Controller
-
-import com.google.inject.name.Names
 import com.google.inject.AbstractModule
+
+import malefiz.controller.ControllerInterface
+import malefiz.controller.Controller
+import malefiz.model.GameBoardInterface
+import malefiz.model.GameBoard
 
 class GameModule extends AbstractModule {
   bind(classOf[ControllerInterface]).to(classOf[Controller])
-  bind(classOf[GameboardInterface]).to(classOf[Gameboard])
+  bind(classOf[GameBoardInterface]).to(classOf[GameBoard])
 }

@@ -1,8 +1,6 @@
 package malefiz
 package util
 
-import controller.BaseImpl.Turn
-
 trait Command[T]:
   def noStep(state: T): T
   def doStep(state: T): T
