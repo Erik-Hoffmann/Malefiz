@@ -7,8 +7,9 @@ import util.Observable
 
 trait ControllerInterface extends Observable:
 
-  var state: State = State.Output
+  var state: State = State.ChoosePeg
   var currentPlayer: Player = Player(Colors.red)
+  var location: (Int, Int) = (0,0)
   var diced: Int = 0
 
   def loadSavedGame(): Unit
@@ -16,14 +17,8 @@ trait ControllerInterface extends Observable:
   def dice(): Unit
   def undo(): Unit
   def redo(): Unit
-  def newGame(players: Int): Unit
-  def setNumPlayers(players: Int): Unit
   def getBoard: GameBoardInterface
-  def endTurn(): Unit
+  def turn(): Unit
   def inputExecute(x: Int, y: Int): Unit
-  def newGame(): Unit
-  def setPegTarget(x: Int, y: Int): Boolean
-  def movePeg(newStone: Peg): Unit
-  def getPeg: Peg
-  def setTargetField(newField: Field): Unit
-  def getTargetField: Field
+  def movePeg(): Unit
+  def getTargetField(x: Int, y: Int): Field

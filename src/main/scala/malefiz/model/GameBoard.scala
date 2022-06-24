@@ -5,7 +5,7 @@ import java.awt.Color
 
 case class GameBoard(numPlayers: Int) extends GameBoardInterface(numPlayers):
   val eol: String = sys.props("line.separator")
-
+  val nCoords: Int => String = (i: Int) => if (i<10)s" $i "else s"$i "
   def buildBoard(board: Array[Array[Ground]]): Array[Array[Ground]] =
     for (idx <- board.indices) {
       if idx % 2 == 0 then
@@ -31,8 +31,8 @@ case class GameBoard(numPlayers: Int) extends GameBoardInterface(numPlayers):
 
   def placePegs(board: Array[Array[Ground]]): Array[Array[Ground]] =
     players.indices.zip(players).foreach{case(idx, player) =>
-      val newPeg = Field(2+(idx*3), height, Peg(player.color));
-      board(height-1)(2+(idx*4)) = newPeg; player.pegs :+ newPeg }
+      val newPeg = Field(2+(idx*4), height-1, Peg(player.color));
+      board(height-1)(2+(idx*4)) = newPeg; player.pegs(0) = newPeg }
     board
 
   def placeBlocker(board: Array[Array[Ground]]): Array[Array[Ground]] =
@@ -58,4 +58,5 @@ case class GameBoard(numPlayers: Int) extends GameBoardInterface(numPlayers):
     this
 
   override def toString: String =
-    board.map(row => row.map(ground => ground.stone.toString).mkString("")).mkString(eol)
+    "   "+board(0).indices.map(nCoords).mkString("")+eol+
+    board.zipWithIndex.map{case (row,idx) => nCoords(idx).toString + row.map(ground => ground.stone.toString).mkString("")}.mkString(s"$eol")
