@@ -6,11 +6,11 @@ import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.BackgroundImage
 import scalafx.scene.image
 import scalafx.animation.FadeTransition
-import aview.Gui
-import aview.gui3d.animationStates.{AnimationState, SetState, StartState}
-import controller.BaseImpl.Turn
+import aview.{GUIStart, Gui}
+import aview.gui3d.animationStates.{AnimationState, MoveState, SetState, StartState}
+import controller.BaseImpl.{Controller, Turn}
 import controller.ControllerInterface
-import model.BaseImpl.Colors
+import model.BaseImpl.{Colors, Direction, Gameboard}
 import scalafx.Includes.*
 import scalafx.animation.{Animation, RotateTransition, Transition}
 import scalafx.application.JFXApp3
@@ -41,6 +41,7 @@ class Gui3d(con : ControllerInterface) extends Gui {
   var guiState: AnimationState = new StartState()
   var subScene = getBoard3d()
   var moved = false
+  var possibleMoves = new Array[PossibleMoves](0)
   val textContainer = new TextField {
     text = "choose direction"
   }
@@ -61,6 +62,7 @@ class Gui3d(con : ControllerInterface) extends Gui {
     val subScene = new SubScene(group ,VIEWPORT_SIZE, VIEWPORT_SIZE * 9.0 / 16
       , true, SceneAntialiasing.Balanced)
     setupImageView()
+    calculatePossibleMoves()
     group.getChildren.add(imgView)
     for (i <- 0 until con.field.height) {
       for (j <- 0 until con.field.width) {
@@ -81,6 +83,7 @@ class Gui3d(con : ControllerInterface) extends Gui {
             color = DarkGray
             translateX = i * boxSize
             translateY = j * boxSize
+            checkIfinAPossibleMove((i,j), this)
           })
         } else if (con.field.checkBlocker(i, j)) {
           group.getChildren.add(new BoardCylinder(i, j) {
@@ -100,6 +103,7 @@ class Gui3d(con : ControllerInterface) extends Gui {
             color = DarkGray
             translateX = i * boxSize
             translateY = j * boxSize
+            checkIfinAPossibleMove((i,j), this)
           })
           group.getChildren.add(new Peg3d(i,j) {
             x = i * boxSize
@@ -113,6 +117,10 @@ class Gui3d(con : ControllerInterface) extends Gui {
                 choosenPeg = Option.apply(this)
                 choosenPeg.get.color = Color.DeepPink
                 textContainer.text = "Move Peg to Position"
+                for (pm <- possibleMoves) {
+                  pm.returnFieldColor()
+                  pm.checkPegCanWalk((i,j))
+                }
               }
             }
             if(!choosenPeg.isEmpty && choosenPeg.get.posx == i && choosenPeg.get.posy == j ){
@@ -160,6 +168,51 @@ class Gui3d(con : ControllerInterface) extends Gui {
     imgView.translateX = -20 -(con.field.playerList.length * 40)
   }
 
+  def calculatePossibleMoves(): Unit = {
+    if (con.field.currentPlayer.pegs.isEmpty) {
+      return;
+    }
+    for (peg <- con.field.currentPlayer.pegs) {
+      possibleMoves = possibleMoves :+ new PossibleMoves(peg)
+      calculateMove(peg, con.diced, Direction.Down)
+    }
+  }
+  def calculateMove(pos : (Int,Int), moves: Int, directionBefore: Direction): Unit = {
+    if (pos._1 - 1 <= con.field.height && pos._2 - 1 >= 0 && pos._2 < con.field.width ) {
+      if ((con.field.checkFreeField(pos._1 - 1, pos._2)
+        || con.field.checkPeg(pos._1 - 1, pos._2))
+        && moves > 0) { // check up
+        calculateMove((pos._1 - 1, pos._2), moves - 1, Direction.Up)
+      }
+      if ((con.field.checkFreeField(pos._1, pos._2 - 1)
+        || con.field.checkPeg(pos._1, pos._2 - 1))
+        && moves > 0
+        && directionBefore != Direction.Left) { // check right
+        calculateMove((pos._1, pos._2 - 1), moves - 1, Direction.Right)
+      }
+      if ((con.field.checkFreeField(pos._1, pos._2 + 1)
+        || con.field.checkPeg(pos._1, pos._2 + 1))
+        && moves > 0
+        && directionBefore != Direction.Right) { // check left
+        calculateMove((pos._1, pos._2 + 1), moves - 1, Direction.Left)
+      }
+      if (moves == 0) {
+        possibleMoves.last.addPos(pos)
+      }
+    }
+  }
+
+  def checkIfinAPossibleMove(pos: (Int,Int), cylinder: BoardCylinder): Unit = {
+    if(possibleMoves == null){
+      return
+    }
+    for (pm <- possibleMoves) {
+      if (pm.possibleMoves.contains(pos)) {
+        pm.addField(cylinder)
+      }
+    }
+  }
+
   def mapColor(c: Colors): Color = {
     c match {
       case Colors.red => Red
@@ -181,13 +234,62 @@ class Gui3d(con : ControllerInterface) extends Gui {
     rotationAxis = Rotate.XAxis
     rotate = 90
     onMouseClicked = handle {
+      if (selfColor == Beige) {
+        val turn = new Turn(Option.apply(choosenPeg.get.posx, choosenPeg.get.posy), (x,y))
+        guiState = new MoveState()
+        guiState.playBefore(gui)
+        con.diced = 0
+        con.put(turn)
+      }
       guiState = new SetState
       guiState.playBefore(gui)
       con.put(new Turn(Option.empty, (x, y)))
     }
+    var selfColor = DarkGray
     def color: Color = Beige
     def color_=(c: Color): Unit = {
       material = new PhongMaterial(diffuseColor = c)
+      selfColor = c
     }
+  }
+  class PossibleMoves(pegPos: (Int,Int)) {
+    var possibleMoves = new Array[(Int,Int)](0)
+    var walkableFields = new Array[BoardCylinder](0)
+
+    def checkPeg(pos: (Int,Int)): Boolean = {
+      pegPos.equals(pos)
+    }
+
+    def checkPegCanWalk(pos: (Int,Int)): Unit = {
+      if (pos.equals(pegPos)) {
+        for (field <- walkableFields) {
+          field.color = Color.Beige
+        }
+      }
+    }
+    def returnFieldColor(): Unit = {
+      for (field <- walkableFields) {
+        field.color = Color.DarkGray
+      }
+    }
+    def addField(field: BoardCylinder): Unit = {
+      walkableFields = walkableFields :+ field
+    }
+    def addPos(pos :(Int,Int)): Unit = {
+      possibleMoves = possibleMoves :+ pos
+    }
+  }
+}
+object Gui3d {
+  @main def main(): Unit = {
+    val gb = new Gameboard(4)
+    val con = new Controller(gb)
+    val gui = new GUIStart(con)
+    val threadGui = new Thread {
+      override def run(): Unit = {
+        gui.main(Array[String]())
+      }
+    }
+    threadGui.start()
   }
 }

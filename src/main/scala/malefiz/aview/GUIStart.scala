@@ -17,7 +17,8 @@ import scalafx.stage.Stage
 
 class GUIStart(con : ControllerInterface) extends JFXApp3, Observer{
   con.add(this)
-  var gui: Gui = new Gui3d(con)
+  var gui: Gui = new Gui:
+    override def update: Scene = {return new Scene()}
   override def start(): Unit = {
     stage = new JFXApp3.PrimaryStage {
       title = "Malefiz"
