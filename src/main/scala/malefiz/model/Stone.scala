@@ -1,9 +1,11 @@
 package malefiz
 package model
 
-class Stone(sort: String)
+class Stone(sort: String):
+  override def toString: String = sort
 
-case class Peg(position: Field, color: Colors) extends Stone(" \uE008 ")
+case class Peg(color: Colors) extends Stone(" \uE008 "):
+  override def toString: String = "" + color + " \uE008 " + Colors.default
 
 case class FreeField() extends Stone(" □ ")
 

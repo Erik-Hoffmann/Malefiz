@@ -2,21 +2,18 @@ package malefiz
 package controller
 
 import aview.TUI
-import model.GameBoardInterface
-import model.Player
-import model.Field
-import model.Peg
-import model.Colors
+import model.{GameBoardInterface, Peg, Player, Field, Colors, Ground}
 import util.Observable
 
 trait ControllerInterface extends Observable:
 
-  val state: State = State.Output
+  var state: State = State.Output
   var currentPlayer: Player = Player(Colors.red)
   var diced: Int = 0
 
   def loadSavedGame(): Unit
   def saveGame(): Unit
+  def dice(): Unit
   def undo(): Unit
   def redo(): Unit
   def newGame(players: Int): Unit

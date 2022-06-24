@@ -2,4 +2,6 @@ package malefiz
 package model
 
 abstract class Ground():
-  def free(): Boolean = true
+  val stone: Stone = Empty()
+  def getStone: String = stone.toString
+  def isFree: Boolean = true

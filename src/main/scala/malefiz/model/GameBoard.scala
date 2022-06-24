@@ -1,10 +1,10 @@
 package malefiz
 package model
 
+import java.awt.Color
+
 case class GameBoard(numPlayers: Int) extends GameBoardInterface(numPlayers):
   val eol: String = sys.props("line.separator")
-
-  def createPlayers: Array[Player] = Array.tabulate(numPlayers) { n => new Player(Colors.fromOrdinal(n)) }
 
   def buildBoard(board: Array[Array[Ground]]): Array[Array[Ground]] =
     for (idx <- board.indices) {
@@ -20,22 +20,32 @@ case class GameBoard(numPlayers: Int) extends GameBoardInterface(numPlayers):
     board
 
   def updateRowFilled(row: Int, innerWidth: Int): Array[Ground] =
-    (0 until width).map(idx => if idx < (width - innerWidth) / 2 || idx > width - ((width - innerWidth) / 2 + 1) then Field(row, idx, Empty()) else Field(row, idx, FreeField())).toArray
+    (0 until width).map(idx => if idx < (width - innerWidth) / 2 || idx > width - ((width - innerWidth) / 2 + 1) then EmptyGround(row, idx) else Field(row, idx, FreeField())).toArray
 
   def updateRowSpaced(row: Int, vertices: Int): Array[Ground] =
     (0 until width).map(idx =>
       if idx < (width - (vertices + (vertices - 1) * 3)) / 2 ||
         idx > width - ((width - (vertices + (vertices - 1) * 3)) / 2) ||
         (idx - ((width - (vertices + (vertices - 1) * 3)) / 2)) % 4 != 0
-      then Field(row, idx, Empty()) else Field(row, idx, FreeField())).toArray
+      then EmptyGround(row, idx) else Field(row, idx, FreeField())).toArray
+
+  def placePegs(board: Array[Array[Ground]]): Array[Array[Ground]] =
+    players.indices.zip(players).foreach{case(idx, player) =>
+      val newPeg = Field(2+(idx*3), height, Peg(player.color));
+      board(height-1)(2+(idx*4)) = newPeg; player.pegs :+ newPeg }
+    board
+
+  def placeBlocker(board: Array[Array[Ground]]): Array[Array[Ground]] =
+    board.indices.map(idx => if (idx != 0 && idx % 2 == 1 && idx != 1 && idx != height-1)
+      board(idx).indices.map(fidx => if (board(idx-1)(fidx).isInstanceOf[Field]) board(idx)(fidx) = Field(idx, fidx, Blocker()))
+    )
+    board
 
   def checkWin: Boolean = ???
   def createBoard: GameBoardInterface = ???
   def getNumPlayers: Int = ???
   def moveBlocker(field: Field): Unit = ???
-  def moveStone
-  (src: Field, dest: Field):
-  Option[Stone] = ???
+  def moveStone(src: Field, dest: Field): Option[Stone] = ???
   def pegGoHome(peg: Peg): Unit = ???
   def removeStone(field: Field): Unit = ???
   def validateTargetBlocker(x: Int, y: Int): Boolean = ???
@@ -43,6 +53,9 @@ case class GameBoard(numPlayers: Int) extends GameBoardInterface(numPlayers):
 
   override def buildGame: GameBoardInterface =
     buildBoard(board)
-    // TODO: hier blocker platzieren
-    // TODO: player initialization
+    placePegs(board)
+    placeBlocker(board)
     this
+
+  override def toString: String =
+    board.map(row => row.map(ground => ground.stone.toString).mkString("")).mkString(eol)

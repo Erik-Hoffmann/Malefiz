@@ -2,7 +2,8 @@ package malefiz
 package controller
 
 import com.google.inject.{Guice, Injector}
-import model.{Field, GameBoard, GameBoardInterface, Peg, Player}
+import scala.util.Random
+import model.{Field, GameBoard, GameBoardInterface, Peg, Player, Ground}
 
 case class Controller(numPlayers: Int) extends ControllerInterface:
   var gameBoard: GameBoardInterface = GameBoard(numPlayers).buildGame
@@ -23,3 +24,4 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
   def setPegTarget(x: Int, y: Int): Boolean = ???
   def setTargetField(newField: Field): Unit = ???
   def undo(): Unit = ???
+  def dice(): Unit = diced = Random.nextInt(6)+1
