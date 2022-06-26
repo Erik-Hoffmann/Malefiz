@@ -1,8 +1,9 @@
 package malefiz
 
 import scala.io.StdIn.readLine
-import aview.{GUIStart, TUI}
+import aview.TUI
 import controller.ControllerInterface
+import aview.gui3d.Gui3d
 //import controller.ExecuteTurnCommand
 import controller.BaseImpl.Controller
 import model.BaseImpl.Gameboard
@@ -22,7 +23,7 @@ object Malefiz {
   lazy val board: GameboardInterface = inject.getInstance(classOf[Gameboard])
   lazy val controller: ControllerInterface = inject.getInstance(classOf[Controller])
   lazy val tui = inject.getInstance(classOf[TUI])
-  lazy val gui = inject.getInstance(classOf[GUIStart])
+  lazy val gui = inject.getInstance(classOf[Gui3d])
   val threadGui = new Thread {
     override def run(): Unit = {
       gui.main(Array[String]())

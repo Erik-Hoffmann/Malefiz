@@ -10,7 +10,7 @@ class StartState  extends AnimationState{
   override def playBefore(gui :Gui3d): Unit = {}
   override def playAfter(gui: Gui3d): Unit = {
     rotateCamera(gui)
-    gui.cameraBody.getTransforms().add(new Rotate(330, Rotate.XAxis))
+    gui.cameraBody.getTransforms().add(new Rotate(330, Rotate.YAxis))
     gui.textContainer.text = "set new Peg"
     gui.guiState = new SetState
   }

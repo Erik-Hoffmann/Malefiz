@@ -6,14 +6,14 @@ import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.BackgroundImage
 import scalafx.scene.image
 import scalafx.animation.FadeTransition
-import aview.{GUIStart, Gui}
-import aview.gui3d.animationStates.{AnimationState, MoveState, SetState, StartState}
+import animationStates.{AnimationState, MoveState, SetState, StartState}
 import controller.BaseImpl.{Controller, Turn}
 import controller.ControllerInterface
+import util.Observer
 import model.BaseImpl.{Colors, Direction, Gameboard}
 import scalafx.Includes.*
 import scalafx.animation.{Animation, RotateTransition, Transition}
-import scalafx.application.JFXApp3
+import scalafx.application.{JFXApp3, Platform}
 import scalafx.beans.binding.Bindings
 import scalafx.event.EventIncludes.handle
 import scalafx.geometry.Point3D
@@ -30,31 +30,47 @@ import scalafx.stage.Stage
 import scalafx.util.Duration
 
 
-class Gui3d(con : ControllerInterface) extends Gui {
+class Gui3d(con : ControllerInterface) extends JFXApp3, Observer{
   val VIEWPORT_SIZE = 800
   val SCALE = 1
   val boxSize = 40
   val boxDepth = 30
   var choosenPeg :Option[Peg3d] = None
   var cameraBody = new PerspectiveCamera()
-  val imgView = new ImageView(getClass.getResource("/background-old-paper.jpg").toString)
+  var imgView = new ImageView()
   var guiState: AnimationState = new StartState()
-  var subScene = getBoard3d()
   var moved = false
   var possibleMoves = new Array[PossibleMoves](0)
-  val textContainer = new TextField {
-    text = "choose direction"
-  }
+  var textContainer: TextField = null
   var gui = this
+  con.add(this)
 
-  override def update: Scene = {
-    cameraBody = new PerspectiveCamera()
-    new Scene {
-      fill = Black
-      subScene = getBoard3d()
-      guiState.playAfter(gui)
-      content = new VBox(subScene, new ControlSubScene(con, new HBox,VIEWPORT_SIZE, gui))
-      cameraBody.getTransforms().add(new Rotate(30, Rotate.XAxis))
+  override def start(): Unit = {
+      stage = new JFXApp3.PrimaryStage {
+        title = "Malefiz"
+        imgView = new ImageView(getClass.getResource("/background-old-paper.jpg").toString)
+        textContainer = new TextField {
+          text = "choose direction"
+        }
+        scene = new Scene {
+          cameraBody = new PerspectiveCamera()
+          fill = Black
+          guiState.playAfter(gui)
+          content = new VBox(getBoard3d(),new ControlSubScene(con, new HBox,VIEWPORT_SIZE, gui))
+          cameraBody.getTransforms().add(new Rotate(30, Rotate.XAxis))
+        }
+      }
+    }
+
+  override def update(): Unit = {
+    Platform.runLater {
+      cameraBody = new PerspectiveCamera()
+      stage.scene = new Scene {
+        fill = Black
+        guiState.playAfter(gui)
+        content = new VBox(getBoard3d(), new ControlSubScene(con, new HBox,VIEWPORT_SIZE, gui))
+        cameraBody.getTransforms().add(new Rotate(30, Rotate.XAxis))
+      }
     }
   }
   def getBoard3d(): SubScene = {
@@ -178,7 +194,7 @@ class Gui3d(con : ControllerInterface) extends Gui {
     }
   }
   def calculateMove(pos : (Int,Int), moves: Int, directionBefore: Direction): Unit = {
-    if (pos._1 - 1 <= con.field.height && pos._2 - 1 >= 0 && pos._2 < con.field.width ) {
+    if (pos._1 - 1 <= con.field.height && pos._2 - 1 >= 0 && pos._2 + 1 < con.field.width ) {
       if ((con.field.checkFreeField(pos._1 - 1, pos._2)
         || con.field.checkPeg(pos._1 - 1, pos._2))
         && moves > 0) { // check up
@@ -284,7 +300,7 @@ object Gui3d {
   @main def main(): Unit = {
     val gb = new Gameboard(4)
     val con = new Controller(gb)
-    val gui = new GUIStart(con)
+    val gui = new Gui3d(con)
     val threadGui = new Thread {
       override def run(): Unit = {
         gui.main(Array[String]())
