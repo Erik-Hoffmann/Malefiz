@@ -27,8 +27,8 @@ class TUI(controller: ControllerInterface) extends Observer:
     readLine(s"Please select an option:$eol(q)uit, do(t)urn, (u)ndo, (r)edo$eol") match
       case "q" => System.exit(0)
       case "t" => if (controller.diced == 6 && controller.currentPlayer.pegs.length < controller.currentPlayer.numPegs && newPeg)controller.newPeg();controller.turn();inputTargetField();inputOption()
-      case "u" => controller.undo(); inputOption()
-      case "r" => controller.redo(); inputOption()
+      case "u" => controller.undo(); printBoard(); inputOption()
+      case "r" => controller.redo(); printBoard(); inputOption()
       case "p" =>printBoard(); inputOption()
       case _ => inputOption()
 

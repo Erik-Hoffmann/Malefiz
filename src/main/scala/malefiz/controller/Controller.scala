@@ -32,7 +32,6 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
         else
           state = State.Failure; notifyObservers()
           state = State.ChoosePeg
-          
       case State.ChooseDest =>
         if (validateTargetField(x,y))
           state = State.ChooseDestSuccess; notifyObservers()
@@ -41,15 +40,16 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
             state = State.ChooseBlockerTarget;
           else
             moveComplete(x,y)
+            undoManager.doStep(this, new MoveCommand(this))
         else
           state = State.Failure; notifyObservers()
           state = State.ChooseDest
-          
       case State.ChooseBlockerTarget =>
         if (validateTargetField(x,y) && !getTargetField(x,y).isBlocker)
           blockerTarget = getTargetField(x,y)
           moveBlocker()
           state = State.MoveComplete
+          undoManager.doStep(this, new SaveCommand(this))
           moveComplete(x,y)
         else state = State.Failure; notifyObservers()
         
@@ -76,7 +76,7 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
       playerRotation()
       state = State.Output; notifyObservers()
       state = State.ChoosePeg
-      undoManager.doStep(this, new SaveCommand(this))
+
 
   def newPeg(): Unit =
     currentPlayer.pegs(currentPlayer.pegs.filterNot(_.equals(null)).length) = Field(currentPlayer.startField._1, currentPlayer.startField._2, Peg(currentPlayer.color))
@@ -101,28 +101,8 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
   
   def dice(): Unit = diced = Random.nextInt(6)+1
   
-  def undo(): Unit =
-    val savedController = undoManager.undoStep(this)
-    gameBoard = savedController.gameBoard
-    currentPlayer = savedController.currentPlayer
-    playersPeg = savedController.playersPeg
-    blocking = savedController.blocking
-    blockerTarget = savedController.blockerTarget
-    state = savedController.state
-    location =savedController.location
-    diced = savedController.diced
-    notifyObservers()
-  
-  def redo(): Unit =
-    val savedController = undoManager.redoStep(this)
-    gameBoard = savedController.gameBoard
-    currentPlayer = savedController.currentPlayer
-    playersPeg = savedController.playersPeg
-    blocking = savedController.blocking
-    blockerTarget = savedController.blockerTarget
-    state = savedController.state
-    location =savedController.location
-    diced = savedController.diced
-    notifyObservers()
+  def undo(): Unit = undoManager.undoStep(this)
+
+  def redo(): Unit = undoManager.redoStep(this)
   
   def saveGame(): Unit = ???
