@@ -4,8 +4,6 @@ import com.google.inject.{Guice, Injector}
 import malefiz.aview.TUI
 import malefiz.controller.ControllerInterface
 import malefiz.controller.Controller
-import malefiz.model.GameBoardInterface
-import malefiz.model.GameBoard
 
 import scala.io.StdIn.readLine
 

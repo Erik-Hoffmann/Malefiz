@@ -1,3 +1,4 @@
+/*
 package malefiz
 package model.BaseImpl
 
@@ -25,3 +26,5 @@ class StoneSpec extends AnyWordSpec {
     }
   }
 }
+
+ */

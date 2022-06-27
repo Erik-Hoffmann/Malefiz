@@ -2,8 +2,10 @@ package malefiz
 package controller
 
 import com.google.inject.{Guice, Injector}
+import util.UndoManager
+
 import scala.util.Random
-import model.{Field, GameBoard, GameBoardInterface, Peg, Player, FreeField, Ground, Empty}
+import model.{Empty, Field, FreeField, GameBoard, GameBoardInterface, Ground, Peg, Player}
 
 case class Controller(numPlayers: Int) extends ControllerInterface:
   
@@ -13,6 +15,7 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
   var playersTarget: Field = Field(0,0, Empty())
   var blockerTarget: Field = Field(0,0,Empty())
   var blocking: Boolean = false
+  var undoManager = new UndoManager[Controller]
 
   def getBoard: GameBoardInterface = gameBoard
   
@@ -36,7 +39,8 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
           playersTarget = getTargetField(x,y)
           if (playersTarget.isBlocker)
             state = State.ChooseBlockerTarget;
-          else moveComplete(x,y)
+          else
+            moveComplete(x,y)
         else
           state = State.Failure; notifyObservers()
           state = State.ChooseDest
@@ -72,6 +76,7 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
       playerRotation()
       state = State.Output; notifyObservers()
       state = State.ChoosePeg
+      undoManager.doStep(this, new SaveCommand(this))
 
   def newPeg(): Unit =
     currentPlayer.pegs(currentPlayer.pegs.filterNot(_.equals(null)).length) = Field(currentPlayer.startField._1, currentPlayer.startField._2, Peg(currentPlayer.color))
@@ -90,14 +95,34 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
 
   def getTargetField(y: Int, x: Int): Field = gameBoard.board(x)(y).asInstanceOf[Field]
 
-  def validateTargetField(y: Int, x: Int): Boolean = x>=0 && y>=0 && x<gameBoard.width && y<gameBoard.height && gameBoard.board(x)(y).isFree
+  def validateTargetField(y: Int, x: Int): Boolean = x>=0 && y>=0 && y<gameBoard.width && x<gameBoard.height && gameBoard.board(x)(y).isFree
   
   def isWon(y: Int, x: Int): Boolean = y == 0 && x == gameBoard.width/2+1
   
   def dice(): Unit = diced = Random.nextInt(6)+1
   
-  def undo(): Unit = ???
+  def undo(): Unit =
+    val savedController = undoManager.undoStep(this)
+    gameBoard = savedController.gameBoard
+    currentPlayer = savedController.currentPlayer
+    playersPeg = savedController.playersPeg
+    blocking = savedController.blocking
+    blockerTarget = savedController.blockerTarget
+    state = savedController.state
+    location =savedController.location
+    diced = savedController.diced
+    notifyObservers()
   
-  def redo(): Unit = ???
+  def redo(): Unit =
+    val savedController = undoManager.redoStep(this)
+    gameBoard = savedController.gameBoard
+    currentPlayer = savedController.currentPlayer
+    playersPeg = savedController.playersPeg
+    blocking = savedController.blocking
+    blockerTarget = savedController.blockerTarget
+    state = savedController.state
+    location =savedController.location
+    diced = savedController.diced
+    notifyObservers()
   
   def saveGame(): Unit = ???

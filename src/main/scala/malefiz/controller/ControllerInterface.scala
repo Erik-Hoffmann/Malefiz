@@ -2,8 +2,8 @@ package malefiz
 package controller
 
 import aview.TUI
-import model.{GameBoardInterface, Peg, Player, Field, Colors, Ground}
 import util.Observable
+import model.{GameBoardInterface, Player, Field}
 
 trait ControllerInterface extends Observable:
   var currentPlayer: Player
