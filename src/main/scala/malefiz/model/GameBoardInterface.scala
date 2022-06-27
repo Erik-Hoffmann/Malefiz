@@ -5,7 +5,7 @@ trait GameBoardInterface(numPlayers: Int):
   val width: Int = numPlayers * 4 + 1
   val height: Int = numPlayers * 2 + 2
   val board: Array[Array[Ground]] = Array.ofDim[Ground](height, width)
-  val players: Array[Player] = Array.tabulate(numPlayers) { n => Player(Colors.fromOrdinal(n)) }
+  val players: Array[Player] = Array.tabulate(numPlayers) { n => Player(Colors.fromOrdinal(n), (2+(n*4), height)) }
 
   def buildGame: GameBoardInterface
   def getNumPlayers: Int

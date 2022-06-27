@@ -59,4 +59,4 @@ case class GameBoard(numPlayers: Int) extends GameBoardInterface(numPlayers):
 
   override def toString: String =
     "   "+board(0).indices.map(nCoords).mkString("")+eol+
-    board.zipWithIndex.map{case (row,idx) => nCoords(idx).toString + row.map(ground => ground.stone.toString).mkString("")}.mkString(s"$eol")
+    board.zipWithIndex.map{case (row,idx) => nCoords(idx).toString + row.map(ground => ground.toString).mkString("")}.mkString(s"$eol")

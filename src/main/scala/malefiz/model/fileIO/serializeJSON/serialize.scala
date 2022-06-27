@@ -40,7 +40,7 @@ class serialize extends fileIOInterface {
         "color" -> player.color.toString,
         "stones" -> player.numPegs,
 //        "startField" -> player.,
-        "pegs" -> pegsToJSON(player.pegs)
+//        "pegs" -> pegsToJSON(player.pegs)
       )
 
   def pegsToJSON(pegs: Array[Peg]): JsArray =

@@ -6,46 +6,98 @@ import scala.util.Random
 import model.{Field, GameBoard, GameBoardInterface, Peg, Player, FreeField, Ground, Empty}
 
 case class Controller(numPlayers: Int) extends ControllerInterface:
+  
   var gameBoard: GameBoardInterface = GameBoard(numPlayers).buildGame
-  currentPlayer = gameBoard.players(0)
+  var currentPlayer: Player = gameBoard.players(0)
   var playersPeg: Field = currentPlayer.pegs(0)
   var playersTarget: Field = Field(0,0, Empty())
+  var blockerTarget: Field = Field(0,0,Empty())
+  var blocking: Boolean = false
 
   def getBoard: GameBoardInterface = gameBoard
-  def turn(): Unit =
-    notifyObservers()
+  
+  def turn(): Unit = notifyObservers()
+  
   def inputExecute(x: Int, y: Int): Unit =
     state match
       case State.ChoosePeg =>
         if (currentPlayer.getPegs.map(_.getCoords).contains((x,y)))
-          state = State.ChosePegSuccess
-          notifyObservers()
-          playersPeg = currentPlayer.getPegByPos(x,y)
+          state = State.ChosePegSuccess; notifyObservers()
+          playersPeg = currentPlayer.getPegByPos(x,y).get
           location = (x,y)
           state = State.ChooseDest
         else
-          state = State.Failure
-          notifyObservers()
+          state = State.Failure; notifyObservers()
           state = State.ChoosePeg
+          
       case State.ChooseDest =>
-        println(gameBoard.board(x)(y).toString)
         if (validateTargetField(x,y))
-          state = State.ChooseDestSuccess
-          playersTarget =
-          movePeg()
-          state = State.Output
-          notifyObservers()
+          state = State.ChooseDestSuccess; notifyObservers()
+          playersTarget = getTargetField(x,y)
+          if (playersTarget.isBlocker)
+            state = State.ChooseBlockerTarget;
+          else moveComplete(x,y)
+        else
+          state = State.Failure; notifyObservers()
+          state = State.ChooseDest
+          
+      case State.ChooseBlockerTarget =>
+        if (validateTargetField(x,y) && !getTargetField(x,y).isBlocker)
+          blockerTarget = getTargetField(x,y)
+          moveBlocker()
+          state = State.MoveComplete
+          moveComplete(x,y)
+        else state = State.Failure; notifyObservers()
+        
+      case State.Output =>
+      case State.Failure =>
+      case State.ChosePegSuccess =>
+      case State.ChooseDestSuccess =>
+      case State.MoveSuccess =>
+      case State.Win =>
+      case State.MoveComplete =>
 
+  def playerRotation(): Unit =
+    println("current Index: " + gameBoard.players.indexOf(currentPlayer))
+    currentPlayer = if (gameBoard.players.indexOf(currentPlayer) == gameBoard.players.length-1) gameBoard.players(0) else gameBoard.players(gameBoard.players.indexOf(currentPlayer)+1)
 
   def loadSavedGame(): Unit = ???
-  def movePeg(): Unit = ??? // TODO: dis not working :(
-//    val temp = playersPeg
-//    gameBoard.board(playersPeg.x)(playersPeg.y) = Field(playersPeg.x, playersPeg.y, FreeField())
-//    gameBoard.board(playersTarget.x)(playersTarget.y) = playersPeg
-  def getTargetField(x: Int, y: Int): Field = gameBoard.board(x)(y).asInstanceOf[Field]
 
-  def redo(): Unit = ???
-  def saveGame(): Unit = ???
-  def validateTargetField(x: Int, y: Int): Boolean = x>=0 && y>=0 && x<gameBoard.width && y<gameBoard.height && gameBoard.board(x)(y).isFree
-  def undo(): Unit = ???
+  def moveComplete(y: Int, x: Int): Unit =
+    movePeg()
+    state = State.MoveSuccess; notifyObservers()
+    if (isWon(x,y))
+      state = State.Win; notifyObservers()
+    else
+      playerRotation()
+      state = State.Output; notifyObservers()
+      state = State.ChoosePeg
+
+  def newPeg(): Unit =
+    currentPlayer.pegs(currentPlayer.pegs.filterNot(_.equals(null)).length) = Field(currentPlayer.startField._1, currentPlayer.startField._2, Peg(currentPlayer.color))
+    gameBoard.board(currentPlayer.startField._1)(currentPlayer.startField._2)
+
+  def movePeg(): Unit =
+    currentPlayer.updatePeg(playersPeg, playersTarget)
+    val temp = playersPeg.stone
+    playersPeg.stone = playersTarget.stone
+    playersTarget.stone = temp
+
+  def moveBlocker(): Unit =
+    val temp = blockerTarget.stone
+    blockerTarget.stone = playersTarget.stone
+    playersTarget.stone = temp
+
+  def getTargetField(y: Int, x: Int): Field = gameBoard.board(x)(y).asInstanceOf[Field]
+
+  def validateTargetField(y: Int, x: Int): Boolean = x>=0 && y>=0 && x<gameBoard.width && y<gameBoard.height && gameBoard.board(x)(y).isFree
+  
+  def isWon(y: Int, x: Int): Boolean = y == 0 && x == gameBoard.width/2+1
+  
   def dice(): Unit = diced = Random.nextInt(6)+1
+  
+  def undo(): Unit = ???
+  
+  def redo(): Unit = ???
+  
+  def saveGame(): Unit = ???
