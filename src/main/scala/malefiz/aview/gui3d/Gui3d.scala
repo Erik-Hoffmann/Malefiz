@@ -7,10 +7,10 @@ import scalafx.scene.layout.BackgroundImage
 import scalafx.scene.image
 import scalafx.animation.FadeTransition
 import animationStates.{AnimationState, MoveState, SetState, StartState}
-import controller.BaseImpl.{Controller, Turn}
 import controller.ControllerInterface
+import malefiz.aview.ControlSubScene
 import util.Observer
-import model.BaseImpl.{Colors, Direction, Gameboard}
+import model.{Colors, Direction, EmptyGround, Field, Gameboard}
 import scalafx.Includes.*
 import scalafx.animation.{Animation, RotateTransition, Transition}
 import scalafx.application.{JFXApp3, Platform}
@@ -77,79 +77,71 @@ class Gui3d(con : ControllerInterface) extends JFXApp3, Observer{
     val group = new Group
     val subScene = new SubScene(group ,VIEWPORT_SIZE, VIEWPORT_SIZE * 9.0 / 16
       , true, SceneAntialiasing.Balanced)
+    val gameboard = con.getBoard
     setupImageView()
     calculatePossibleMoves()
     group.getChildren.add(imgView)
-    for (i <- 0 until con.field.height) {
-      for (j <- 0 until con.field.width) {
-        if (con.field.checkEmpty(i, j)) {
-          group.getChildren.add(new Box {
-            translateX = i * boxSize
-            translateY = j *boxSize
-            width = boxSize
-            height =boxSize
-            depth = 0
-            scaleX = SCALE
-            scaleY = SCALE
-            scaleX = SCALE
-            material = new PhongMaterial(Transparent)
-          })
-        } else if (con.field.checkFreeField(i, j)) {
-          group.getChildren.add(new BoardCylinder(i, j) {
-            color = DarkGray
-            translateX = i * boxSize
-            translateY = j * boxSize
-            checkIfinAPossibleMove((i,j), this)
-          })
-        } else if (con.field.checkBlocker(i, j)) {
-          group.getChildren.add(new BoardCylinder(i, j) {
-            color = DarkGray
-            translateX = i * boxSize
-            translateY = j * boxSize
-          })
-          group.getChildren.add(new BoardCylinder(i, j) {
-            color = Black
-            height = 40
-            translateX = i * boxSize
-            translateY = j * boxSize
-            translateZ = boxDepth + boxDepth
-          })
-        } else if (con.field.checkPeg(i, j)) {
-          group.getChildren.add(new BoardCylinder(i, j) {
-            color = DarkGray
-            translateX = i * boxSize
-            translateY = j * boxSize
-            checkIfinAPossibleMove((i,j), this)
-          })
-          group.getChildren.add(new Peg3d(i,j) {
-            x = i * boxSize
-            y = j * boxSize
-            z = 0
-            this.onMouseClicked =  handle {
-              if (con.field.currentPlayer.pegs.contains((i, j))) {
-                if (!choosenPeg.isEmpty) {
-                  choosenPeg.get.color = mapColor(con.field.currentPlayer.colour)
+    for (i <- 0 until gameboard.height) {
+      for (j <- 0 until gameboard.width) {
+        gameboard.board(i)(j) match {
+          case EmptyGround =>
+            group.getChildren.add(new Box {
+              translateX = i * boxSize
+              translateY = j * boxSize
+              width = boxSize
+              height = boxSize
+              depth = 0
+              scaleX = SCALE
+              scaleY = SCALE
+              scaleX = SCALE
+              material = new PhongMaterial(Transparent)
+            })
+          case Field() =>
+            group.getChildren.add(new BoardCylinder(i, j) {
+              color = DarkGray
+              translateX = i * boxSize
+              translateY = j * boxSize
+              checkIfinAPossibleMove((i, j), this)
+            })
+            if (gameboard.board(i)(j).asInstanceOf[Field].isBlocker()) {
+              group.getChildren.add(new BoardCylinder(i, j) {
+                color = Black
+                height = 40
+                translateX = i * boxSize
+                translateY = j * boxSize
+                translateZ = boxDepth + boxDepth
+              })
+            } else if (gameboard.board(i)(j).asInstanceOf[Field].isFree) {
+              group.getChildren.add(new Peg3d(i, j) {
+                x = i * boxSize
+                y = j * boxSize
+                z = 0
+                this.onMouseClicked = handle {
+                  if (con.currentPlayer.pegs.contains(con.gameBoard.board(i)(j))) {
+                    if (!choosenPeg.isEmpty) {
+                      choosenPeg.get.color = mapColor(con.currentPlayer.color)
+                    }
+                    choosenPeg = Option.apply(this)
+                    choosenPeg.get.color = Color.DeepPink
+                    textContainer.text = "Move Peg to Position"
+                    for (pm <- possibleMoves) {
+                      pm.returnFieldColor()
+                      pm.checkPegCanWalk((i, j))
+                    }
+                  }
                 }
-                choosenPeg = Option.apply(this)
-                choosenPeg.get.color = Color.DeepPink
-                textContainer.text = "Move Peg to Position"
-                for (pm <- possibleMoves) {
-                  pm.returnFieldColor()
-                  pm.checkPegCanWalk((i,j))
+                if (!choosenPeg.isEmpty && choosenPeg.get.posx == i && choosenPeg.get.posy == j) {
+                  color = Color.DeepPink
+                  moved = true
+                } else {
+                  for (p <- con.gamBoard.playerList) {
+                    if (p.pegs.contains(con.gameBoard.board(i)(j))) {
+                      color = mapColor(p.color);
+                    }
+                  }
                 }
-              }
+              })
             }
-            if(!choosenPeg.isEmpty && choosenPeg.get.posx == i && choosenPeg.get.posy == j ){
-              color = Color.DeepPink
-              moved = true
-            } else {
-              for (p <- con.field.playerList) {
-                if(p.pegs.contains(i,j)){
-                  color = mapColor(p.colour);
-                }
-              }
-            }
-          })
         }
       }
     }
@@ -162,10 +154,10 @@ class Gui3d(con : ControllerInterface) extends JFXApp3, Observer{
     cameraBody.scaleX = SCALE
     cameraBody.scaleY = SCALE
     cameraBody.scaleZ = SCALE
-    cameraBody.translateZ = con.field.playerList.length*30
-    cameraBody.translateX = -((VIEWPORT_SIZE * 9.0 / 16) - con.field.height*40)/2
-    cameraBody.translateY = -20 -(VIEWPORT_SIZE - con.field.width*40)/2
-    if(con.field.playerList.length >= 6) {
+    cameraBody.translateZ = con.getBoard.playerList.length*30
+    cameraBody.translateX = -((VIEWPORT_SIZE * 9.0 / 16) - con.getBoard.height*40)/2
+    cameraBody.translateY = -20 -(VIEWPORT_SIZE - con.getBoard.width*40)/2
+    if(con.getBoard.playerList.length >= 6) {
       cameraBody.translateX = cameraBody.translateX.value + 150
     }
     cameraBody.getTransforms().add(new Rotate(180, Rotate.YAxis))
@@ -178,38 +170,30 @@ class Gui3d(con : ControllerInterface) extends JFXApp3, Observer{
     imgView.setPreserveRatio(false)
     imgView.rotationAxis = Rotate.ZAxis
     imgView.rotate = 90
-    imgView.fitWidth = con.field.width*boxSize + 50
-    imgView.fitHeight = con.field.height*boxSize + 50
-    imgView.translateY =  -65 + (con.field.playerList.length * 40)
-    imgView.translateX = -20 -(con.field.playerList.length * 40)
+    imgView.fitWidth = con.getBoard.width*boxSize + 50
+    imgView.fitHeight = con.getBoard.height*boxSize + 50
+    imgView.translateY =  -65 + (con.getBoard.playerList.length * 40)
+    imgView.translateX = -20 -(con.getBoard.playerList.length * 40)
   }
 
   def calculatePossibleMoves(): Unit = {
-    if (con.field.currentPlayer.pegs.isEmpty) {
+    if (con.getBoard.currentPlayer.pegs.isEmpty) {
       return;
     }
-    for (peg <- con.field.currentPlayer.pegs) {
+    for (peg <- con.getBoard.currentPlayer.pegs) {
       possibleMoves = possibleMoves :+ new PossibleMoves(peg)
       calculateMove(peg, con.diced, Direction.Down)
     }
   }
   def calculateMove(pos : (Int,Int), moves: Int, directionBefore: Direction): Unit = {
-    if (pos._1 - 1 <= con.field.height && pos._2 - 1 >= 0 && pos._2 + 1 < con.field.width ) {
-      if ((con.field.checkFreeField(pos._1 - 1, pos._2)
-        || con.field.checkPeg(pos._1 - 1, pos._2))
-        && moves > 0) { // check up
+    if (pos._1 - 1 <= con.getBoard.height && pos._2 - 1 >= 0 && pos._2 + 1 < con.getBoard.width ) {
+      if(checkField((pos._1-1, pos._2), moves)) {
         calculateMove((pos._1 - 1, pos._2), moves - 1, Direction.Up)
       }
-      if ((con.field.checkFreeField(pos._1, pos._2 - 1)
-        || con.field.checkPeg(pos._1, pos._2 - 1))
-        && moves > 0
-        && directionBefore != Direction.Left) { // check right
+      if (checkField((pos._1, pos._2 - 1), moves)){
         calculateMove((pos._1, pos._2 - 1), moves - 1, Direction.Right)
       }
-      if ((con.field.checkFreeField(pos._1, pos._2 + 1)
-        || con.field.checkPeg(pos._1, pos._2 + 1))
-        && moves > 0
-        && directionBefore != Direction.Right) { // check left
+      if (checkField((pos._1, pos._2 + 1), moves)) {
         calculateMove((pos._1, pos._2 + 1), moves - 1, Direction.Left)
       }
       if (moves == 0) {
@@ -217,7 +201,20 @@ class Gui3d(con : ControllerInterface) extends JFXApp3, Observer{
       }
     }
   }
-
+  def checkField(pos: (Int, Int), moves: Int): Boolean = {
+    con.getBoard.board(pos._1)(pos._2) match
+      case EmptyGround() =>
+        false
+      case Field() =>
+        if (!(con.getBoard.board(pos._1)(pos._2).asInstanceOf[Field].isBlocker)
+          && moves > 0) {
+          return true
+        } else if (con.getBoard.board(pos._1)(pos._2).asInstanceOf[Field].isBlocker
+          && moves == 1){
+          return true
+        }
+        false
+  }
   def checkIfinAPossibleMove(pos: (Int,Int), cylinder: BoardCylinder): Unit = {
     if(possibleMoves == null){
       return
