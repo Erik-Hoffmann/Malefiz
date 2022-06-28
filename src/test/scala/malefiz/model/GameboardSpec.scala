@@ -1,3 +1,4 @@
+/*
 package malefiz
 package model.BaseImpl
 
@@ -69,3 +70,5 @@ class GameboardSpec extends AnyWordSpec {
     }
   }
 }
+
+ */

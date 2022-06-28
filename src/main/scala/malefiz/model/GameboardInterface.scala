@@ -1,36 +1,21 @@
 package malefiz
 package model
 
-import model.BaseImpl.{Player, Stone}
+trait GameBoardInterface(numPlayers: Int):
+  val width: Int = numPlayers * 4 + 1
+  val height: Int = numPlayers * 2 + 2
+  val board: Array[Array[Ground]] = Array.ofDim[Ground](height, width)
+  val players: Array[Player] = Array.tabulate(numPlayers) { n => Player(Colors.fromOrdinal(n), (2+(n*4), height)) }
 
-trait GameboardInterface(players: Int) {
+  def buildGame: GameBoardInterface
+  def getNumPlayers: Int
+  def validateTargetBlocker(x: Int, y: Int): Boolean
+  def validateTargetPeg(x: Int, y: Int): Boolean
+  def moveBlocker(field: Field): Unit
+  def removeStone(field: Field): Unit
+  def placePegs(board: Array[Array[Ground]]): Array[Array[Ground]]
+  def pegGoHome(peg: Peg): Unit
+  def moveStone(src: Field, dest: Field): Option[Stone]
+  def checkWin: Boolean
+  def toString: String
 
-  val playerList: Array[Player] = createPlayers
-  var currentPlayer: Player = playerList.last
-  val (width, height) = dimensions(players)
-
-//  val dice: Int
-
-
-  def dimensions(players: Int): (Int, Int)
-
-  def createPlayers: Array[Player]
-
-  def buildBoard(): GameboardInterface
-
-  def put(stone: Stone, x:Int,y:Int): GameboardInterface
-
-  def switchPos(srcPos: Option[(Int, Int)], destPos:(Int,Int)): GameboardInterface
-  def undoPutPeg(destPos :(Int, Int)): GameboardInterface
-  def exampleUpdateBoard(): GameboardInterface
-  def legalMove(src:(Int,Int), dest: (Int,Int), countMoves: Int): Boolean
-  def removeBlocker(pos :(Int,Int)): GameboardInterface
-  def sendPegHome(pos: (Int, Int)): GameboardInterface
-  def checkPeg(pos :(Int,Int)): Boolean
-  def checkEmpty(pos :(Int,Int)): Boolean
-  def checkBlocker(pos :(Int,Int)): Boolean
-  def checkFreeField(pos :(Int,Int)): Boolean
-
-  //  def store(num: Int): GameboardInterface
-
-}

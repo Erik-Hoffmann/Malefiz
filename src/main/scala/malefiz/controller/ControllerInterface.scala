@@ -1,21 +1,26 @@
 package malefiz
 package controller
 
-import controller.BaseImpl.Turn
-import model.GameboardInterface
+import aview.TUI
 import util.Observable
+import model.{GameBoardInterface, Player, Field}
 
-trait ControllerInterface(board: GameboardInterface) extends Observable {
-  
-  var field : GameboardInterface = board
+trait ControllerInterface extends Observable:
+  var currentPlayer: Player
+  var state: State = State.ChoosePeg
+  var location: (Int, Int) = (0,0)
   var diced: Int = 0
-  
-  def nextPlayer(): Unit
-  def firstPlayer(): Unit
-  def legalMove(turn: Turn): Boolean
-  def put(turn: Turn): Unit
-  def movePeg(turn: Turn): Unit
+
+  def loadSavedGame(): Unit
+  def saveGame(): Unit
+  def dice(): Unit
   def undo(): Unit
   def redo(): Unit
-  def dice():Unit
-}
+  def getBoard: GameBoardInterface
+  def turn(): Unit
+  def inputExecute(x: Int, y: Int): Unit
+  def movePeg(): Unit
+  def getTargetField(x: Int, y: Int): Field
+  def playerRotation(): Unit
+  def isWon(x: Int, y: Int): Boolean
+  def newPeg(): Unit

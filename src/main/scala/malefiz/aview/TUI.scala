@@ -2,72 +2,61 @@ package malefiz
 package aview
 
 import controller.ControllerInterface
-import controller.BaseImpl.Turn
-import model.BaseImpl.{Direction, Gameboard}
-
-import scala.io.StdIn.readLine
 import util.Observer
+import controller.State
+import model.{Field, Colors}
+import model.Colors._
+import scala.io.StdIn.readLine
+import scala.util.{Try, Success, Failure}
 
-import java.util.Scanner
-import scala.util.{Failure, Success, Try}
+class TUI(controller: ControllerInterface) extends Observer:
+  val eol: String = sys.props("line.separator")
+  controller.add(this)
 
-class TUI(cont: ControllerInterface) extends Observer:
-  cont.add(this)
-  println(cont.field.toString)
+  def printBoard(): Unit =
+    println(s"${controller.getBoard.toString}$eol Player ${controller.currentPlayer.toString} do your move!$eol")
 
-  def run(): Unit =
-    doTurn()
+  def startMenu(): Unit =
+    readLine(s"Please select an option:$eol(q)uit, (s)tart game, (l)oad$eol") match
+      case "q" => System.exit(0)
+      case "s" => controller.dice();printBoard();inputOption()
+      case "l" => ???
+      case _ => startMenu()
 
+  def inputOption(): Unit =
+    readLine(s"Please select an option:$eol(q)uit, do(t)urn, (u)ndo, (r)edo$eol") match
+      case "q" => System.exit(0)
+      case "t" => if (controller.diced == 6 && controller.currentPlayer.pegs.length < controller.currentPlayer.numPegs && newPeg)controller.newPeg();controller.turn();inputTargetField();inputOption()
+      case "u" => controller.undo(); printBoard(); inputOption()
+      case "r" => controller.redo(); printBoard(); inputOption()
+      case "p" =>printBoard(); inputOption()
+      case _ => inputOption()
 
-  override def update(): Unit = println(cont.field.toString)
+  def inputTargetField(): Unit =
+    toIntTuple(readLine(s"<x,y>:$eol")) match
+      case Success(t) => controller.inputExecute(t._1, t._2)
+      case Failure(_) => println("Invalid input! Try again!"); inputTargetField()
 
-  def doTurn(): Unit =
-    val input = readLine("Command to Execute: ")
-    input match
-      case "q" => System.exit(0);
-      case "p" => cont.field.playerList.foreach(p => p.pegs.foreach(pos => println(pos.toString())))
-      case "s" => cont.put(Turn(Option.empty,inputPosition))
-      case "z" => cont.undo()
-      case "r" => cont.redo()
+  def newPeg: Boolean =
+    readLine(s"Do you want a new Peg on the Field? <y,n>$eol") match
+      case "y" => true
+      case "n" => false
+      case _ => newPeg
+  
+  def toIntTuple(input: String): Try[(Int,Int)] =
+      Try {input.replace(" ", "").split(",").map(i => i.toInt) match {case Array(x,y) => (x,y)}}
 
-    if cont.field.playerList.indexOf(cont.field.currentPlayer) + 1< cont.field.playerList.length
-      then
-      cont.nextPlayer()
-      doTurn()
-      else
-      cont.firstPlayer()
-      doTurn()
-    //directionAnalyser(choosePeg(controller.currentPlayer), readLine)
+  override def update(): Unit =
+    controller.state match
+      case State.Output => printBoard()
+      case State.Failure => println(s"$red Something went wrong, please try again!$default$eol")
+      case State.ChoosePeg => println(s"Please enter coordinates of the peg you want to move!$eol"+s"Your pegs are here: [${controller.currentPlayer.getPegs.map(peg => "("+peg.x+", "+peg.y+")").mkString(", ")}]")
+      case State.ChosePegSuccess => println(s"$green Peg chosen successfully!$default$eol")
+      case State.ChooseDest => println(s"Please enter destination coordinates$eol you diced: ${controller.diced} and chose a peg at ${controller.location.toString}$eol")
+      case State.ChooseDestSuccess => println(s"$green Destination chosen successfully!$default$eol")
+      case State.MoveSuccess => println(s"$green Move Successful!$default$eol")
+      case State.Win => println(s"${controller.currentPlayer.toString} won the game!")
+      case State.ChooseBlockerTarget => println(s"You need to move a Blocker, select a destination!$eol")
+      case State.MoveComplete => println("Nice!!")
 
-  //def choosePeg(player: Player): Unit = {} // Field =
-    //controller.field.getField(player.pegs(validateNumber(readLine).getOrElse(0)))
-
-
-
-  def analyseInput(input: String): Option[Int] = Some(0)
-//    input match
-//      case "q" => System.exit(0); None
-//      case "z" => controller.redo(); controller.doAndPublish(); None
-//      case "y" => controller.undo(); controller.doAndPublish(); None
-//      case "n" => controller.doAndPublish(controller.field.buildBoard()); None
-//      case "u" => controller.doAndPublish(controller.field.exampleUpdateBoard()); None
-
-  //def directionAnalyser(pegField: Field, input: String): Unit = {}//Array[Direction] =
-    //input.map(d => if !directionValid(pegField, input) then directionAnalyser(pegField, input) else controller.field.movePeg(pegField, input))
-
-  //def directionValid(currentField: Field, direction: String): Unit = {} // Option[Direction] =
-    /*
-    direction match
-      case "r" => if controller.field.getField(currentField.x + 1, currentField.y).free() then Direction.Right else None
-      case "l" => if controller.field.getField(currentField.x - 1, currentField.y).free() then Direction.Left else None
-      case "u" => if controller.field.getField(currentField.x, currentField.y + 1).free() then Direction.Up else None
-      case "d" => if controller.field.getField(currentField.x, currentField.y - 1).free() then Direction.Down else None
-      case _ => println("Fehler!"); None
-    */
-  def inputPosition: (Int, Int) = {
-      val sc = new Scanner(System.in)
-      val pos1 = readLine("Position for Peg x: ").toInt
-      val pos2 = readLine("y: ").toInt
-      (pos1,pos2)
-    }
-  def validateNumber(x: String): Try[Int] = Try { x.toInt } // Try Monad ?
+  def run(): Unit = startMenu()
