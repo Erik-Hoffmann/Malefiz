@@ -1,71 +1,26 @@
-/*
 package malefiz
 package controller
 
-import controller.{Controller, Turn}
-import model.Gameboard
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
-import util.Observer
 
 class ControllerSpec extends AnyWordSpec {
-  val eol: String = sys.props("line.separator")
-  "The Controller" should {
-
-    val controller = Controller(Gameboard(1))
-    "put a stone on the field when a move is made" in {
-      controller.put(Turn(Option.empty, (0,0)))
-      controller.field.toString should be(
-      "      □       " + eol +
-      " □  □  □  □  □ " + eol +
-      " □           □ " + eol +
-      " □  □  □  □  □ "
-      )
+  val myController: Controller = Controller(1)
+  "A Controller" should {
+    "check field if peg is on the field" in {
+      myController.checkField(0,0,0) should be (false)
     }
-    "notify its observers on change" in {
-      class TestObserver(controller: Controller) extends Observer:
-        controller.add(this)
-        var bing = false
-        override def update(): Unit = bing = true
-      val testObserver = TestObserver(controller)
-      testObserver.bing should be(false)
-      controller.put(Turn(Option.empty, (0,0)))
-      testObserver.bing should be(true)
+    "get a field" in {
+      myController.getTargetField(0,2).toString should be (" □ ")
     }
-    "undo and redo a move" in {
-      controller.put(Turn(Option.empty, (1,0)))
-      controller.field.toString should be(
-        " \uE008     □       " + eol +
-        " \uE008  □  □  □  □ " + eol +
-        " □           □ " + eol +
-        " □  □  □  □  □ "
-      )
-      controller.undo()
-      controller.field.toString should be(
-        " \uE008     □       " + eol +
-        " □  □  □  □  □ " + eol +
-        " □           □ " + eol +
-        " □  □  □  □  □ "
-      )
-      controller.redo()
-      controller.field.toString should be(
-        " \uE008     □       " + eol +
-          " \uE008  □  □  □  □ " + eol +
-          " □           □ " + eol +
-          " □  □  □  □  □ "
-      )
+    "validate a possible move" in {
+      myController.validatePlayerTargetField(0,2) shouldBe a [Boolean]
     }
-    val con = Controller(Gameboard(4))
-    "change to first player" in {
-      con.firstPlayer()
-      con.field.currentPlayer should be(con.field.playerList(0))
+    "validate a free field" in {
+      myController.validateTargetField(0,2) should be (true)
     }
-    con.put(Turn(Option.empty,(0,0)))
-    "change to next Player" in {
-      con.nextPlayer()
-      con.field.currentPlayer.pegs.length should be(0)
+    "check if won" in {
+      myController.isWon(2,0) should be (true)
     }
-    
   }
 }
- */

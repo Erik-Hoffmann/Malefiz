@@ -177,7 +177,7 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
 
   def validateTargetField(y: Int, x: Int):Boolean = x>=0 && y>=0 && y<gameBoard.width && x<gameBoard.height && gameBoard.board(x)(y).isFree
   
-  def isWon(x: Int, y: Int): Boolean = y == 0 && x == gameBoard.width/2+1 //TODO needs all pegs to reach this field
+  def isWon(x: Int, y: Int): Boolean = y == 0 && x == gameBoard.width/2
   
   def dice(): Unit = diced = Random.nextInt(6)+1
   

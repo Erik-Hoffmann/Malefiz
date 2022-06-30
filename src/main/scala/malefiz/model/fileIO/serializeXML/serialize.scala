@@ -45,6 +45,11 @@ class serialize extends fileIOInterface {
         playersToXML(players)
         }
       </players>
+      <playercount>
+        {
+        board.players.length
+        }
+      </playercount>
       <current>
         {
         current
