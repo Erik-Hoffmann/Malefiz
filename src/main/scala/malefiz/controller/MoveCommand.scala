@@ -1,15 +1,15 @@
 package malefiz
 package controller
 
-import model.{Field, GameBoard, Ground}
+import model.{Field, GameBoard, Ground, Player}
 import util.Command
 
 
 class MoveCommand(controller: Controller) extends Command[Controller]{
-  val player = controller.currentPlayer.copy()
-  val playersPeg = controller.playersPeg.copy()
-  val playersTarget = controller.playersTarget.copy()
-  val diceRoll = controller.diced
+  val player: Player = controller.currentPlayer.copy()
+  val playersPeg: Field = controller.playersPeg.copy()
+  val playersTarget: Field = controller.playersTarget.copy()
+  val diceRoll: Int = controller.diced
 
   def noStep(controller: Controller): Controller = controller
 

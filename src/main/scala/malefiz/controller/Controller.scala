@@ -28,7 +28,7 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
       case State.ChoosePeg =>
         if (currentPlayer.getPegs.map(_.getCoords).contains((y,x)))
           location = (x,y)
-          calculatePossibleMoves
+          calculatePossibleMoves()
           state = State.ChosePegSuccess; notifyObservers()
           playersPeg = currentPlayer.getPegByPos(y,x).get
           state = State.ChooseDest
@@ -82,7 +82,6 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
         state = State.ChoosePeg
 
   def playerRotation(): Unit =
-    println("current Index: " + gameBoard.players.indexOf(currentPlayer))
     currentPlayer = if (gameBoard.players.indexOf(currentPlayer) == gameBoard.players.length-1) gameBoard.players(0) else gameBoard.players(gameBoard.players.indexOf(currentPlayer)+1)
 
   def loadSavedGame(): Unit = ???
@@ -98,7 +97,7 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
       state = State.Output; notifyObservers()
       state = State.ChoosePeg
 
-  def calculatePossibleMoves : Unit =
+  def calculatePossibleMoves() : Unit =
     if(location._1 == 0 && location._2 == 0) {}
     else
       calculateMove(location._1, location._2, diced, Direction.Down)

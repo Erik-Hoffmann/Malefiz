@@ -52,8 +52,8 @@ class TUI(controller: ControllerInterface) extends Observer:
   override def update(): Unit =
     controller.state match
       case State.Output => printBoard()
-      case State.Failure => println(s"$red "+ controller.errMessage+s"$default$eol")
-      case State.ChoosePeg => println(s"Please enter coordinates of the peg you want to move!$eol"+s"Your pegs are here: [${controller.currentPlayer.getPegs.map(peg => "("+peg.y+", "+peg.x+")").mkString(", ")}]")
+      case State.Failure => println(s"$red${controller.errMessage}$default$eol")
+      case State.ChoosePeg => println(s"Please enter coordinates of the peg you want to move!$eol Your pegs are here: [${controller.currentPlayer.getPegs.map(peg => "("+peg.y+", "+peg.x+")").mkString(", ")}]")
       case State.ChosePegSuccess => println(s"$green Peg chosen successfully!$default$eol")
       case State.ChooseDest => println(s"Please enter destination coordinates$eol you diced: ${controller.diced} and chose a peg at ${controller.location.toString}$eol")
       case State.ChooseDestSuccess => println(s"$green Destination chosen successfully!$default$eol")
@@ -61,5 +61,6 @@ class TUI(controller: ControllerInterface) extends Observer:
       case State.Win => println(s"${controller.currentPlayer.toString} won the game!")
       case State.ChooseBlockerTarget => println(s"You need to move a Blocker, select a destination!$eol")
       case State.MoveComplete => println("Nice!!")
+      case State.Set =>
 
   def run(): Unit = startMenu()
