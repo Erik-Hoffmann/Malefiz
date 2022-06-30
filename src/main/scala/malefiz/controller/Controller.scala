@@ -18,6 +18,8 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
   var blocking: Boolean = false
   var undoManager = new UndoManager[Controller]
 
+  val injector: Injector = Guice.createInjector(new GameModule)
+
 
   def getBoard: GameBoardInterface = gameBoard
   

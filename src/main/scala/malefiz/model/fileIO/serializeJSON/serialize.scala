@@ -39,31 +39,18 @@ class serialize extends fileIOInterface {
     gameBoard
 
 
-  def loadPlayers(playerJson: JsValue): Array[Player] = ???
-
+  def loadPlayers(playerJson: JsValue, controller: ControllerInterface): Array[Player] = ???
 
   def generateFromString(string: String, x: Int, y: Int): Ground =
     string match
       case "   " =>  EmptyGround(x,y)
-      case " □ " => new Field(x,y,FreeField())
-      case " ■ " => new Field(x,y,Blocker())
-      case _ => ???
+      case " □ " => Field(x,y,FreeField())
+      case " ■ " => Field(x,y,Blocker())
 
-
-
-  def loadController(json: JsValue): Controller = ???
-
+  def loadController(json: JsValue, controller: ControllerInterface): Controller = ???
 
   def boardToJson(array: Array[Array[Ground]]): JsArray =
-    val arr = new JsArray()
-    for (subarr <- array)  {
-      val subJsArray = new JsArray()
-      for (field <- subarr){
-        subJsArray.append(Json.parse(field.toString))
-      }
-      arr.append(subJsArray)
-    }
-    arr
+    JsArray(array.map(row => JsArray(row.map(field => Json.parse(field.toString)))))
 
   def playerToJson(player: Player): JsObject =
     Json.obj(
@@ -73,16 +60,7 @@ class serialize extends fileIOInterface {
     )
 
   def pegsToJSON(pegs: Array[Field]): JsArray =
-    val jsArray  = new JsArray()
-    for(field <- pegs) {
-      if(field == null) {}
-      else
-        jsArray.append(Json.obj(
-          "x" -> JsNumber(field.x),
-        "y" -> JsNumber(field.y)
-        ))
-    }
-    jsArray
+    JsArray(pegs.filterNot(_==null).map(peg => Json.obj("x"->JsNumber(peg.x), "y" -> JsNumber(peg.y))))
 
   override def dumps(cntrllr: ControllerInterface): Unit =
     val writer = new PrintWriter(new File(fileName))
@@ -92,6 +70,7 @@ class serialize extends fileIOInterface {
   override def loads(cntrllr: ControllerInterface): Unit =
     if (Files.exists(Paths.get(fileName))) {
       val data = Json.parse(Source.fromFile(fileName).getLines.mkString)
+      loadPlayers()
       // loadController
       cntrllr.notifyObservers()
     }
