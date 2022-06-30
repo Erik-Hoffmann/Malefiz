@@ -1,14 +1,20 @@
 ThisBuild / version := "0.1.0-SNAPSHOT"
 
-ThisBuild / scalaVersion := "3.1.1"
+ThisBuild / scalaVersion := "3.1.2"
 
 lazy val root = (project in file("."))
   .settings(
     name := "Malefiz"
   )
 libraryDependencies += "org.scalafx" %% "scalafx" % "16.0.0-R24"
-libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.11"
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.11" % "test"
+libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.12"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.12" % "test"
+
+libraryDependencies += "com.google.inject.extensions" % "guice-assistedinject" % "5.1.0"
+libraryDependencies += ( "net.codingwell" %% "scala-guice" % "5.0.2" ).cross( CrossVersion.for3Use2_13 )
+
+libraryDependencies += ("com.typesafe.play" %% "play-json" % "2.10.0-RC6")
+libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "2.1.0"
 
 libraryDependencies ++= {
   // Determine OS version of JavaFX binaries
