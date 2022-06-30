@@ -12,8 +12,8 @@ import controller.{Controller, ControllerInterface}
 
 class serialize extends fileIOInterface {
 
-  override val extension: String = ".json"
-  override val fileName: String = baseName + extension
+  override val extension: String = "json"
+  override val fileName: String = s"$baseName.$extension"
 
   def serializeGame(gameBoard: GameBoardInterface, currentPlayer: Int): JsValue =
     Json.obj(
