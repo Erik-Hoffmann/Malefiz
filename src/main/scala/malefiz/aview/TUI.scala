@@ -24,12 +24,15 @@ class TUI(controller: ControllerInterface) extends Observer:
       case _ => startMenu()
 
   def inputOption(): Unit =
-    readLine(s"Please select an option:$eol(q)uit, do(t)urn, (u)ndo, (r)edo$eol") match
+    readLine(s"Please select an option:$eol(q)uit, do(t)urn, (u)ndo, (r)edo, (y)ield, (s)et a Peg$eol") match
       case "q" => System.exit(0)
       case "t" => if (controller.diced == 6 && controller.currentPlayer.pegs.length < controller.currentPlayer.numPegs && newPeg)controller.newPeg();controller.turn();inputTargetField();inputOption()
       case "u" => controller.undo(); printBoard(); inputOption()
       case "r" => controller.redo(); printBoard(); inputOption()
-      case "p" =>printBoard(); inputOption()
+      case "y" =>controller.state = State.MoveComplete; controller.inputExecute(0,0); inputOption()
+      case "s" => controller.state =State.Set
+      case "m" =>controller.possibleMoves.foreach(println); inputOption()
+      case "p" => controller.getBoard.players.foreach(p => p.pegs.foreach(f =>if f == null then{} else println (f.getCoords))); inputOption()
       case _ => inputOption()
 
   def inputTargetField(): Unit =
@@ -49,8 +52,8 @@ class TUI(controller: ControllerInterface) extends Observer:
   override def update(): Unit =
     controller.state match
       case State.Output => printBoard()
-      case State.Failure => println(s"$red Something went wrong, please try again!$default$eol")
-      case State.ChoosePeg => println(s"Please enter coordinates of the peg you want to move!$eol"+s"Your pegs are here: [${controller.currentPlayer.getPegs.map(peg => "("+peg.x+", "+peg.y+")").mkString(", ")}]")
+      case State.Failure => println(s"$red "+ controller.errMessage+s"$default$eol")
+      case State.ChoosePeg => println(s"Please enter coordinates of the peg you want to move!$eol"+s"Your pegs are here: [${controller.currentPlayer.getPegs.map(peg => "("+peg.y+", "+peg.x+")").mkString(", ")}]")
       case State.ChosePegSuccess => println(s"$green Peg chosen successfully!$default$eol")
       case State.ChooseDest => println(s"Please enter destination coordinates$eol you diced: ${controller.diced} and chose a peg at ${controller.location.toString}$eol")
       case State.ChooseDestSuccess => println(s"$green Destination chosen successfully!$default$eol")

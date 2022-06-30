@@ -31,7 +31,7 @@ case class GameBoard(numPlayers: Int) extends GameBoardInterface(numPlayers):
 
   def placePegs(board: Array[Array[Ground]]): Array[Array[Ground]] =
     players.indices.zip(players).foreach{case(idx, player) =>
-      val newPeg = Field(2+(idx*4), height-1, Peg(player.color));
+      val newPeg = Field(height-1, 2+(idx*4), Peg(player.color));
       board(height-1)(2+(idx*4)) = newPeg; player.pegs(0) = newPeg }
     board
 

@@ -10,6 +10,8 @@ trait ControllerInterface extends Observable:
   var state: State = State.ChoosePeg
   var location: (Int, Int) = (0,0)
   var diced: Int = 0
+  var possibleMoves = new Array[(Int,Int)](0)
+  var errMessage = ""
 
   def loadSavedGame(): Unit
   def saveGame(): Unit

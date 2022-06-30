@@ -3,6 +3,7 @@ package controller
 
 enum State(display: String):
   override def toString: String = display
+  case Set extends State("Set")
   case Output extends State("Output")
   case Failure extends State("Failure")
   case ChoosePeg extends State("ChoosePeg")

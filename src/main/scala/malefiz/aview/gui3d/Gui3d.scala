@@ -8,10 +8,10 @@ import scalafx.scene.image
 import scalafx.animation.FadeTransition
 import animationStates.{AnimationState, MoveState, SetState, StartState}
 import controller.{Controller, ControllerInterface}
-import malefiz.aview.ControlSubScene
+import malefiz.aview.{ControlSubScene, TUI}
 import util.Observer
-import  controller.State
-import model.{Colors, EmptyGround, Field, GameBoard }
+import controller.State
+import model.{Colors, EmptyGround, Field, GameBoard}
 import scalafx.Includes.*
 import scalafx.animation.{Animation, RotateTransition, Transition}
 import scalafx.application.{JFXApp3, Platform}
@@ -41,7 +41,7 @@ class Gui3d(con : ControllerInterface) extends JFXApp3, Observer{
   var imgView = new ImageView()
   var guiState: AnimationState = new StartState()
   var moved = false
-  var possibleMoves = new Array[PossibleMoves](0)
+  var possibleMoves: PossibleMoves = null
   var textContainer: TextField = null
   var subScene: SubScene = null
   var gui = this
@@ -83,33 +83,32 @@ class Gui3d(con : ControllerInterface) extends JFXApp3, Observer{
     val subScene = new SubScene(group ,VIEWPORT_SIZE, VIEWPORT_SIZE * 9.0 / 16
       , true, SceneAntialiasing.Balanced)
     val gameboard = con.getBoard
+    setText()
     setupImageView()
-    calculatePossibleMoves()
     group.getChildren.add(imgView)
     for (i <- 0 until gameboard.height) {
       for (j <- 0 until gameboard.width) {
-        println(i+":"+j)
         if (!gameboard.board(i)(j).isFree) {
           if (isPeg(i,j)){
             group.getChildren.add(new BoardCylinder(i, j) {
               color = DarkGray
               translateX = i * boxSize
               translateY = j * boxSize
-              checkIfinAPossibleMove((i, j), this)
+              checkIfinAPossibleMove((j, i), this)
             })
             group.getChildren.add(new Peg3d(i, j) {
               x = i * boxSize
               y = j * boxSize
               z = 0
               this.onMouseClicked = handle {
-                if (!con.currentPlayer.getPegByPos(posy, posx).isEmpty) {
+                if (!con.currentPlayer.getPegByPos(posx, posy).isEmpty) {
                   if (!choosenPeg.isEmpty) {
                     choosenPeg.get.color = mapColor(con.currentPlayer.color)
                   }
                   choosenPeg = Option.apply(this)
                   choosenPeg.get.color = Color.DeepPink
-                  textContainer.text = "Move Peg to Position"
-                  con.inputExecute(posx,posy)
+                  possibleMoves = new PossibleMoves(posy,posx)
+                  con.inputExecute(posy,posx)
                 }
               }
               if (!choosenPeg.isEmpty && choosenPeg.get.posx == i && choosenPeg.get.posy == j) {
@@ -117,7 +116,7 @@ class Gui3d(con : ControllerInterface) extends JFXApp3, Observer{
                 moved = true
               } else {
                 for (p <- con.getBoard.players) {
-                  if (!p.getPegByPos(posy, posx).isEmpty) {
+                  if (!p.getPegByPos(posx, posy).isEmpty) {
                     color = mapColor(p.color);
                   }
                 }
@@ -141,7 +140,7 @@ class Gui3d(con : ControllerInterface) extends JFXApp3, Observer{
             color = DarkGray
             translateX = i * boxSize
             translateY = j * boxSize
-            checkIfinAPossibleMove((i, j), this)
+            checkIfinAPossibleMove((j, i), this)
           })
           if (gameboard.board(i)(j).asInstanceOf[Field].isBlocker) {
             group.getChildren.add(new BoardCylinder(i, j) {
@@ -164,9 +163,7 @@ class Gui3d(con : ControllerInterface) extends JFXApp3, Observer{
   def showPossibleMoves(): Unit = {
     if (choosenPeg.isEmpty) {
     } else {
-      for (pm <- possibleMoves) {
-        pm.checkPegCanWalk(choosenPeg.get.posx, choosenPeg.get.posy)
-      }
+      possibleMoves.checkPegCanWalk(choosenPeg.get.posy, choosenPeg.get.posx)
     }
   }
   def setUpCamera(): Unit = {
@@ -196,59 +193,31 @@ class Gui3d(con : ControllerInterface) extends JFXApp3, Observer{
   }
   def isPeg(x: Int, y:Int): Boolean = {
     for (p <- con.getBoard.players) {
-      if(!p.getPegByPos(y,x).isEmpty){
+      if(p.getPegs.map(_.getCoords).contains((x,y))){
         return true
       }
     }
     false
   }
-  def calculatePossibleMoves(): Unit = {
-    for (peg <- con.currentPlayer.pegs) {
-      if (peg == null) {
-      } else {
-        possibleMoves = possibleMoves :+ new PossibleMoves((peg.y, peg.x))
-        calculateMove((peg.y, peg.x), con.diced, Direction.Down)
-      }
-    }
-  }
-  def calculateMove(pos : (Int,Int), moves: Int, directionBefore: Direction): Unit = {
-    if (pos._1 - 1 <= con.getBoard.height && pos._2 - 1 >= 0 && pos._2 + 1 < con.getBoard.width ) {
-      if(checkField((pos._1-1, pos._2), moves)) {
-        calculateMove((pos._1 - 1, pos._2), moves - 1, Direction.Up)
-      }
-      if (checkField((pos._1, pos._2 + 1), moves) && directionBefore != Direction.Left){
-        calculateMove((pos._1, pos._2 + 1), moves - 1, Direction.Right)
-      }
-      if (checkField((pos._1, pos._2 - 1), moves)&& directionBefore != Direction.Right) {
-        calculateMove((pos._1, pos._2 - 1), moves - 1, Direction.Left)
-      }
-      if (moves == 0) {
-        possibleMoves.last.addPos(pos)
-      }
-    }
-  }
-  def checkField(pos: (Int, Int), moves: Int): Boolean = {
-    if (!con.getBoard.board(pos._1)(pos._2).isFree) {
-      false
-    } else {
-      if (!(con.getBoard.board(pos._1)(pos._2).asInstanceOf[Field].isBlocker)
-        && moves > 0) {
-        return true
-      } else if (con.getBoard.board(pos._1)(pos._2).asInstanceOf[Field].isBlocker
-        && moves == 1){
-        return true
-      }
-      false
-    }
+  def setText(): Unit = {
+    con.state match
+      case State.Output =>
+      case State.Failure => textContainer.text = con.errMessage
+      case State.ChoosePeg => textContainer.text = "Please choose the peg you want to move!"
+      case State.ChosePegSuccess => textContainer.text = "Peg chosen successfully!"
+      case State.ChooseDest => textContainer.text = "Please choose destination"
+      case State.ChooseDestSuccess =>
+      case State.MoveSuccess =>
+      case State.Win =>
+      case State.ChooseBlockerTarget => textContainer.text = "You need to move a Blocker, choose a destination!"
+      case State.MoveComplete =>
   }
   def checkIfinAPossibleMove(pos: (Int,Int), cylinder: BoardCylinder): Unit = {
     if(possibleMoves == null){
       return
     }
-    for (pm <- possibleMoves) {
-      if (pm.possibleMoves.contains(pos)) {
-        pm.addField(cylinder)
-      }
+    if (con.possibleMoves.contains(pos)) {
+      possibleMoves.addField(cylinder)
     }
   }
 
@@ -277,9 +246,9 @@ class Gui3d(con : ControllerInterface) extends JFXApp3, Observer{
         case State.ChooseDest =>
           guiState = new MoveState()
           guiState.playBefore(gui)
-          con.inputExecute(x,y)
+          con.inputExecute(y,x)
         case State.ChooseBlockerTarget =>
-          con.inputExecute(x,y)
+          con.inputExecute(y,x)
         case _ =>
     }
     var selfColor = DarkGray
@@ -293,13 +262,11 @@ class Gui3d(con : ControllerInterface) extends JFXApp3, Observer{
   }
 
   class PossibleMoves(pegPos: (Int, Int)) {
-    var possibleMoves = new Array[(Int, Int)](0)
     var walkableFields = new Array[BoardCylinder](0)
 
     def checkPeg(pos: (Int, Int)): Boolean = {
       pegPos.equals(pos)
     }
-
     def checkPegCanWalk(pos: (Int, Int)): Unit = {
       if (pos.equals(pegPos)) {
         for (field <- walkableFields) {
@@ -307,31 +274,32 @@ class Gui3d(con : ControllerInterface) extends JFXApp3, Observer{
         }
       }
     }
-
     def returnFieldColor(): Unit = {
       for (field <- walkableFields) {
         field.color = Color.DarkGray
       }
     }
-
     def addField(field: BoardCylinder): Unit = {
       walkableFields = walkableFields :+ field
-    }
-
-    def addPos(pos: (Int, Int)): Unit = {
-      possibleMoves = possibleMoves :+ pos
     }
   }
 }
 object Gui3d {
   @main def main(): Unit = {
-    val con = new Controller(4)
+    val con = new Controller(2)
     val gui = new Gui3d(con)
+    val tui =new TUI(con)
+    val threadTUI = new Thread{
+      override def run(): Unit = {
+        tui.run()
+      }
+    }
     val threadGui = new Thread {
       override def run(): Unit = {
         gui.main(Array[String]())
       }
     }
+    threadTUI.start()
     threadGui.start()
   }
 }
