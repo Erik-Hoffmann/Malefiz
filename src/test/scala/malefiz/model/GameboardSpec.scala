@@ -1,74 +1,46 @@
-/*
 package malefiz
-package model.BaseImpl
+package model
 
-import model.BaseImpl.{Gameboard, Stone}
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.matchers.BeMatcher.*
 import org.scalatest.wordspec.AnyWordSpec
 
 class GameboardSpec extends AnyWordSpec {
   val eol: String = sys.props("line.separator")
-  "The Gameboard" should {
-    val theBoard = Gameboard(1)
+  val theBoard: GameBoard = GameBoard(1)
+  "The GameBoard" should {
     "have dimensions" in {
       theBoard.width should be (5)
       theBoard.height should be (4)
     }
-    "return array with spaced ground items" in {
-      theBoard.updateRowFilled(0, 1).map(i => i.toString).mkString("") should be  ("       □       ")
-      theBoard.updateRowFilled(0, 5).map(i => i.toString).mkString("") should be  (" □  □  □  □  □ ")
-      theBoard.updateRowSpaced(0, 2).map(i => i.toString).mkString("") should be    (" □           □ ")
+    "have an array with Grounds" in {
+      theBoard.board shouldBe a [Array[Array[Ground]]]
     }
-    "return an array of players" in {
-      theBoard.createPlayers.length should be (1)
-      theBoard.playerList.length should be (1)
-    }
-    "return an fully initialized gameboard" in {
-      theBoard.buildBoard().toString should be (
-        "       □       " + eol +
-        " □  □  □  □  □ " + eol +
-        " □           □ " + eol +
-        " □  □  □  □  □ "
-      )
+    "have an array with Players" in {
+      theBoard.players shouldBe a [Array[Player]]
     }
 
-    "return an example updated gameboard" in {
-      theBoard.exampleUpdateBoard().toString should be (
-        " □  □  □  □  □ " + eol +
-          " □  □  □  □  □ " + eol +
-          " □           □ " + eol +
-          " □  □  □  □  □ "
+    "have a builded interface" in {
+      theBoard.buildGame shouldBe a [GameBoardInterface]
+    }
+    "have an array with placed Pegs" in {
+      theBoard.board shouldBe a [Array[Array[Ground]]]
+      theBoard.board(3)(2).toString should be ("[31m  [0m")
+    }
+    "have a string representation" in {
+      theBoard.toString should be (
+        s"    0  1  2  3  4 $eol"+
+        s" 0        □       $eol"+
+        s" 1  □  □  □  □  □ $eol"+
+        s" 2  □           □ $eol"+
+        s" 3  □  □ [31m  [0m □  □ "
       )
     }
-
-    "return an updated gameboard" in {
-      theBoard.put(Stone.apply(Fields.Peg), 0,0).toString should be (
-        " \uE008  □  □  □  □ " + eol +
-          " □  □  □  □  □ " + eol +
-          " □           □ " + eol +
-          " □  □  □  □  □ "
-      )
+    "have a json dump" in {
+      theBoard.toJson.toString should be ("")
     }
-    "check if there is a peg" in {
-      theBoard.checkPeg(0,0 )should be(true)
-    }
-    "check if there is a FreeField" in {
-      theBoard.checkFreeField((1,1)) should be(true)
-    }
-    "check if there is an empty field" in {
-      theBoard.checkEmpty(2,1) should be(true)
-    }
-    var newBoard = theBoard.buildBoard()
-    "check if there is a Blocker" in {
-      newBoard = newBoard.put(Stone.apply(Fields.Blocker),0,0)
-      newBoard.checkBlocker(0,0) should be(true)
-    }
-    "move the blocker" in {
-      newBoard.switchPos(Option.apply((0,0)),(1,1))
-      newBoard.checkBlocker(1,1) should be(true)
+    "load a json dump" in {
+      theBoard.fromJson should be ("")
     }
   }
 }
-
- */

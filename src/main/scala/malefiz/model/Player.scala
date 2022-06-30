@@ -16,10 +16,10 @@ case class Player(color: Colors, startField: (Int, Int)):
   override def toString: String = ""+color+"\uE008"+default
   def toJson: JsValue =
     Json.obj(
-      "pegs" -> pegsToJSON(pegs)
+      "pegs" -> pegsToJSON
     )
     
-  def pegsToJSON(pegs: Array[Field]): JsArray =
+  def pegsToJSON: JsArray =
     var jsArray  = new JsArray()
     for(field <- pegs) {
       if(field == null) {}
