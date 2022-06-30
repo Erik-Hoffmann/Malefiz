@@ -4,10 +4,10 @@ package controller
 import com.fasterxml.jackson.annotation.JsonValue
 import com.google.inject.{Guice, Injector}
 import malefiz.aview.gui3d.Direction
-import malefiz.model.fileIO.serializeJSON.serialize
 import util.UndoManager
 
 import scala.util.Random
+import model.fileIO.fileIOInterface
 import model.{Empty, Field, FreeField, GameBoard, GameBoardInterface, Ground, Peg, Player}
 import play.api.libs.json.{JsNumber, JsValue, Json}
 
@@ -22,6 +22,7 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
   var undoManager = new UndoManager[Controller]
 
   val injector: Injector = Guice.createInjector(new GameModule)
+  val serializer = injector.getInstance(classOf[fileIOInterface])
 
 
   def getBoard: GameBoardInterface = gameBoard
@@ -99,8 +100,7 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
     currentPlayer = if (gameBoard.players.indexOf(currentPlayer) == gameBoard.players.length-1) gameBoard.players(0) else gameBoard.players(gameBoard.players.indexOf(currentPlayer)+1)
 
   def loadSavedGame(): Unit =
-    val writer = new serialize()
-    val controller  = writer.loads()
+    val controller  = serializer.loads()
     currentPlayer = controller.currentPlayer
     gameBoard = controller.getBoard
     println("load successful")
@@ -186,10 +186,7 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
   def redo(): Unit = undoManager.redoStep(this)
   
   def saveGame(): Unit =
-    val writer = new serialize()
-    writer.dumps(gameBoard, gameBoard.players.indexOf(currentPlayer))
-    println("save successful")
-    notifyObservers()
+    serializer.dumps(gameBoard, gameBoard.players.indexOf(currentPlayer))
 
   def toJson: JsValue =
     Json.obj(

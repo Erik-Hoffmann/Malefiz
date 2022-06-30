@@ -24,14 +24,14 @@ class TUI(controller: ControllerInterface) extends Observer:
       case _ => startMenu()
 
   def inputOption(): Unit =
-    readLine(s"Please select an option:$eol(q)uit, do(t)urn, (u)ndo, (r)edo, (y)ield, (s)et a Peg$eol") match
+    readLine(s"Please select an option:$eol(q)uit, do(t)urn, (u)ndo, (r)edo, (y)ield, (s)et a Peg, (save) game$eol") match
       case "q" => System.exit(0)
       case "t" => if (controller.diced == 6 && controller.currentPlayer.pegs.length < controller.currentPlayer.numPegs && newPeg)controller.newPeg();controller.turn();inputTargetField();inputOption()
       case "u" => controller.undo(); printBoard(); inputOption()
       case "r" => controller.redo(); printBoard(); inputOption()
       case "y" =>controller.state = State.MoveComplete; controller.inputExecute(0,0); inputOption()
-      case "s" => controller.state =State.Set
-      case "save" => controller.saveGame()
+      case "s" => controller.state = State.Set; inputOption()
+      case "save" => controller.saveGame(); inputOption()
       case "m" =>controller.possibleMoves.foreach(println); inputOption()
       case "p" => controller.getBoard.players.foreach(p => p.pegs.foreach(f =>if f == null then{} else println (f.getCoords))); inputOption()
       case _ => inputOption()
