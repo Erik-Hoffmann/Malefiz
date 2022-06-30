@@ -198,6 +198,3 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
     gameBoard = gameBoard.fromJson(js)
     currentPlayer = gameBoard.players(currentplayer)
     this
-
-
-
