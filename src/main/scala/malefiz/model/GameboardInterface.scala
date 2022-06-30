@@ -1,6 +1,9 @@
 package malefiz
 package model
 
+import play.api.libs.json.JsValue
+
+
 trait GameBoardInterface(numPlayers: Int):
   val width: Int = numPlayers * 4 + 1
   val height: Int = numPlayers * 2 + 2
@@ -18,4 +21,5 @@ trait GameBoardInterface(numPlayers: Int):
   def moveStone(src: Field, dest: Field): Option[Stone]
   def checkWin: Boolean
   def toString: String
-
+  def toJson: JsValue
+  def fromJson(js: JsValue): GameBoardInterface

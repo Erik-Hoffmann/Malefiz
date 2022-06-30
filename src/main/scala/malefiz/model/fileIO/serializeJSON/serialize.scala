@@ -14,19 +14,8 @@ class serialize extends fileIOInterface {
 
   override val extension: String = "json"
 
-  def serializeGame(cntrllr: ControllerInterface): JsObject =
-    Json.obj(
-      "controller" -> Json.obj(
-        "numPlayers" -> JsNumber(cntrllr.getBoard.players.length),
-        "currentPlayer" -> JsNumber(cntrllr.getBoard.players.indexOf(cntrllr.currentPlayer)),
-        "GameBoard" -> Json.obj(
-          "players" -> JsArray(
-            cntrllr.getBoard.players.map(player => playerToJson(player))
-          ),
-          "board" -> boardToJson(cntrllr.getBoard.board)
-        )
-      )
-    )
+  def serializeGame(cntrllr: ControllerInterface): JsValue =
+    Json.obj("controller" -> cntrllr.toJson)
 
   def loadBoard(jsonBoard: JsValue, players: Int): GameBoard =
     val gameBoard = GameBoard(players)

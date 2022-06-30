@@ -53,7 +53,7 @@ class Gui3d(con : ControllerInterface) extends JFXApp3, Observer{
         title = "Malefiz"
         imgView = new ImageView(getClass.getResource("/background-old-paper.jpg").toString)
         textContainer = new TextField {
-          text = "choose direction"
+          text = ""
         }
         scene = new Scene {
           cameraBody = new PerspectiveCamera()
@@ -286,7 +286,7 @@ class Gui3d(con : ControllerInterface) extends JFXApp3, Observer{
 }
 object Gui3d {
   @main def main(): Unit = {
-    val con = new Controller(2)
+    val con = new Controller(4)
     val gui = new Gui3d(con)
     val tui =new TUI(con)
     val threadTUI = new Thread{

@@ -3,7 +3,8 @@ package controller
 
 import aview.TUI
 import util.Observable
-import model.{GameBoardInterface, Player, Field}
+import model.{Field, GameBoardInterface, Player}
+import play.api.libs.json.JsValue
 
 trait ControllerInterface extends Observable:
   var currentPlayer: Player
@@ -26,3 +27,5 @@ trait ControllerInterface extends Observable:
   def playerRotation(): Unit
   def isWon(x: Int, y: Int): Boolean
   def newPeg(): Unit
+  def toJson: JsValue
+  def fromJson(js: JsValue): ControllerInterface

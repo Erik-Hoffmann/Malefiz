@@ -59,7 +59,7 @@ class ControlSubScene(con :ControllerInterface, box : HBox, viewPortSize :Int,  
     }
   })
   box.children.add(new Button{
-    text = "Yield"
+    text = "Set"
     maxWidth = Double.MaxValue
     maxHeight = Double.MaxValue
     hgrow = Priority.Always

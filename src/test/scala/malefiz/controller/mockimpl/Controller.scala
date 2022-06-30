@@ -1,7 +1,8 @@
 package malefiz.controller.mockimpl
 
 import malefiz.controller.ControllerInterface
-import malefiz.model.{Field, FreeField, GameBoard, GameBoardInterface, Peg, Player, Colors}
+import malefiz.model.{Colors, Field, FreeField, GameBoard, GameBoardInterface, Peg, Player}
+import play.api.libs.json.{JsValue, Json}
 
 class Controller(numPlayers: Int) extends ControllerInterface {
   var currentPlayer: Player = Player(Colors.red,(0,0))
@@ -18,4 +19,6 @@ class Controller(numPlayers: Int) extends ControllerInterface {
   def playerRotation(): Unit = {}
   def isWon(x: Int, y: Int): Boolean  = false
   def newPeg(): Unit = {}
+  def toJson: JsValue = Json.obj()
+  def fromJson(js: JsValue): ControllerInterface = this
 }

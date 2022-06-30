@@ -1,12 +1,14 @@
 package malefiz
 package controller
 
+import com.fasterxml.jackson.annotation.JsonValue
 import com.google.inject.{Guice, Injector}
 import malefiz.aview.gui3d.Direction
 import util.UndoManager
 
 import scala.util.Random
 import model.{Empty, Field, FreeField, GameBoard, GameBoardInterface, Ground, Peg, Player}
+import play.api.libs.json.{JsNumber, JsValue, Json}
 
 case class Controller(numPlayers: Int) extends ControllerInterface:
   
@@ -45,6 +47,9 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
           if (playersTarget.isBlocker)
             state = State.ChooseBlockerTarget;
           else
+            if (!playersTarget.isFree)
+              println("go home scoundrel")
+              sendPegHome(y,x)
             moveComplete(x,y)
             undoManager.doStep(this, new MoveCommand(this))
         else
@@ -63,13 +68,19 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
           state = State.Failure; notifyObservers()
           state = State.ChooseBlockerTarget
       case State.Set =>
-        if(diced ==6)
-          newPeg()
-          playerRotation();dice()
-          state = State.Output; notifyObservers()
-          state = State.ChoosePeg
+        if(diced ==6 )
+          if (currentPlayer.getPegByPos(
+            currentPlayer.startField._2 - 1, currentPlayer.startField._1).isEmpty)
+            newPeg()
+            playerRotation();dice()
+            state = State.Output; notifyObservers()
+            state = State.ChoosePeg
+          else
+            errMessage = "Startfield is already occupied"
+            state = State.Failure; notifyObservers()
+            state = State.ChoosePeg
         else
-          errMessage = "you need to roll a 6 for this"
+          errMessage = "you need to roll a 6 for this "
           state = State.Failure; notifyObservers()
           state = State.ChoosePeg
       case State.Output =>
@@ -117,6 +128,10 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
 
   def checkField(x: Int, y: Int, moves: Int): Boolean =
     if (!gameBoard.board(y)(x).isFree)
+      for (player <- gameBoard.players)
+        if (player.getPegs.map(_.getCoords).contains((y,x))) {
+          return true
+        }
       false
     else
       if (!gameBoard.board(y)(x).asInstanceOf[Field].isBlocker && moves > 0)
@@ -142,13 +157,20 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
     blockerTarget.stone = playersTarget.stone
     playersTarget.stone = temp
 
+  def sendPegHome(x: Int,  y: Int): Unit =
+    gameBoard.board(x)(y) = new Field(x,y, FreeField())
+    playersTarget = gameBoard.board(x)(y).asInstanceOf[Field]
+    for (player <- gameBoard.players)
+      if (player.getPegs.map(_.getCoords).contains((y,x)))
+        player.removePeg(x, y)
+
   def getTargetField(y: Int, x: Int): Field =  gameBoard.board(x)(y).asInstanceOf[Field]
 
   def validatePlayerTargetField(y: Int, x: Int): Boolean = possibleMoves.contains((y,x))
 
   def validateTargetField(y: Int, x: Int):Boolean = x>=0 && y>=0 && y<gameBoard.width && x<gameBoard.height && gameBoard.board(x)(y).isFree
   
-  def isWon(y: Int, x: Int): Boolean = y == 0 && x == gameBoard.width/2+1
+  def isWon(x: Int, y: Int): Boolean = y == 0 && x == gameBoard.width/2+1 //TODO needs all pegs to reach this field
   
   def dice(): Unit = diced = Random.nextInt(6)+1
   
@@ -156,4 +178,21 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
 
   def redo(): Unit = undoManager.redoStep(this)
   
-  def saveGame(): Unit = ???
+  def saveGame(): Unit =
+    val json = toJson
+    println(json)
+
+  def toJson: JsValue =
+    Json.obj(
+      "numPlayers" -> JsNumber(numPlayers),
+      "currentPlayer" -> JsNumber(gameBoard.players.indexOf(currentPlayer)),
+      "GameBoard" -> gameBoard.toJson
+    )
+  def fromJson(js: JsValue): ControllerInterface =
+    val jsonGameboard = js \ "GameBoard"
+    gameBoard = gameBoard.fromJson(jsonGameboard.get)
+    currentPlayer = gameBoard.players((js \ "currentPlayer").get.toString.toInt)
+    this
+
+
+

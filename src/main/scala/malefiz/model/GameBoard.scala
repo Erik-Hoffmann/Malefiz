@@ -1,6 +1,8 @@
 package malefiz
 package model
 
+import play.api.libs.json.{JsArray, JsValue, Json}
+
 import java.awt.Color
 
 case class GameBoard(numPlayers: Int) extends GameBoardInterface(numPlayers):
@@ -60,3 +62,41 @@ case class GameBoard(numPlayers: Int) extends GameBoardInterface(numPlayers):
   override def toString: String =
     "   "+board(0).indices.map(nCoords).mkString("")+eol+
     board.zipWithIndex.map{case (row,idx) => nCoords(idx).toString + row.map(ground => ground.toString).mkString("")}.mkString(s"$eol")
+
+  override def toJson: JsValue =
+    Json.obj(
+      "players" -> JsArray(players.map(players => players.toJson)),
+      "board" -> boardToJson
+    )
+  def boardToJson: JsArray =
+    var arr = new JsArray()
+    for (subarr <- board)  {
+      var subJsArray = new JsArray()
+      for (field <- subarr){
+        subJsArray = subJsArray :+ Json.toJson(field.toString)
+      }
+      arr = arr :+ subJsArray
+    }
+    arr
+
+  override def fromJson(js: JsValue): GameBoardInterface =
+    boardFromJson((js \ "board").get)
+    playersFromJson((js \ "players").get)
+    this
+
+  def playersFromJson(value: JsValue): Unit = ???
+
+  def boardFromJson(jsonBoard: JsValue): Unit =
+    val arr = jsonBoard.as[Array[Array[String]]]
+    for (i <- 0 until arr.length) {
+      for (j <- 0 until arr(i).length){
+        board(i)(j) = generateFromString(arr(i)(j), i, j)
+      }
+    }
+
+  def generateFromString(string: String, x: Int, y: Int): Ground =
+    string match
+      case "   " =>  EmptyGround(x,y)
+      case " □ " => new Field(x,y,FreeField())
+      case " ■ " => new Field(x,y,Blocker())
+      case _ => ???
