@@ -17,10 +17,6 @@ case class GameBoard(numPlayers: Int) extends GameBoardInterface(numPlayers):
     }
     board
 
-  def exampleUpdate(board: Array[Array[Ground]]): Array[Array[Ground]] =
-    board(0) = updateRowFilled(0, 5)
-    board
-
   def updateRowFilled(row: Int, innerWidth: Int): Array[Ground] =
     (0 until width).map(idx => if idx < (width - innerWidth) / 2 || idx > width - ((width - innerWidth) / 2 + 1) then EmptyGround(row, idx) else Field(row, idx, FreeField())).toArray
 
@@ -42,16 +38,6 @@ case class GameBoard(numPlayers: Int) extends GameBoardInterface(numPlayers):
       board(idx).indices.map(fidx => if (board(idx-1)(fidx).isInstanceOf[Field]) board(idx)(fidx) = Field(idx, fidx, Blocker()))
     )
     board
-
-  def checkWin: Boolean = ???
-  def createBoard: GameBoardInterface = ???
-  def getNumPlayers: Int = ???
-  def moveBlocker(field: Field): Unit = ???
-  def moveStone(src: Field, dest: Field): Option[Stone] = ???
-  def pegGoHome(peg: Peg): Unit = ???
-  def removeStone(field: Field): Unit = ???
-  def validateTargetBlocker(x: Int, y: Int): Boolean = ???
-  def validateTargetPeg(x: Int, y: Int): Boolean = ???
 
   override def buildGame: GameBoardInterface =
     buildBoard(board)
@@ -88,8 +74,8 @@ case class GameBoard(numPlayers: Int) extends GameBoardInterface(numPlayers):
 
   def boardFromJson(jsonBoard: JsValue): Unit =
     val arr = jsonBoard.as[Array[Array[String]]]
-    for (i <- 0 until arr.length) {
-      for (j <- 0 until arr(i).length){
+    for (i <- arr.indices) {
+      for (j <- arr(i).indices){
         board(i)(j) = generateFromString(arr(i)(j), i, j)
       }
     }

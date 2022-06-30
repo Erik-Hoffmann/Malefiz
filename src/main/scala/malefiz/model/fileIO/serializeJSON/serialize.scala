@@ -13,6 +13,7 @@ import controller.{Controller, ControllerInterface}
 class serialize extends fileIOInterface {
 
   override val extension: String = "json"
+  override val fileName: String = baseName + extension
 
   def serializeGame(cntrllr: ControllerInterface): JsValue =
     Json.obj("controller" -> cntrllr.toJson)
@@ -59,7 +60,7 @@ class serialize extends fileIOInterface {
   override def loads(cntrllr: ControllerInterface): Unit =
     if (Files.exists(Paths.get(fileName))) {
       val data = Json.parse(Source.fromFile(fileName).getLines.mkString)
-      loadPlayers()
+//      loadPlayers()
       // loadController
       cntrllr.notifyObservers()
     }
