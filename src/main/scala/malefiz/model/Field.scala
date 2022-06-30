@@ -2,6 +2,7 @@ package malefiz
 package model
 
 case class EmptyGround(x: Int, y: Int) extends Ground():
+  def getCoords: (Int, Int) = (x,y)
   override def toString: String = "   "
   override def isFree: Boolean = false
 
