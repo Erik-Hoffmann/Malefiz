@@ -20,5 +20,5 @@ class Controller(numPlayers: Int) extends ControllerInterface {
   def isWon(x: Int, y: Int): Boolean  = false
   def newPeg(): Unit = {}
   def toJson: JsValue = Json.obj()
-  def fromJson(js: JsValue): ControllerInterface = this
+  def fromJson(js: JsValue, currentplayer: Int): ControllerInterface = this
 }

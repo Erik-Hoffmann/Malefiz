@@ -28,4 +28,4 @@ trait ControllerInterface extends Observable:
   def isWon(x: Int, y: Int): Boolean
   def newPeg(): Unit
   def toJson: JsValue
-  def fromJson(js: JsValue): ControllerInterface
+  def fromJson(js: JsValue, currentplayer:Int): ControllerInterface

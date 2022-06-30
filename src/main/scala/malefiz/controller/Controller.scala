@@ -4,6 +4,7 @@ package controller
 import com.fasterxml.jackson.annotation.JsonValue
 import com.google.inject.{Guice, Injector}
 import malefiz.aview.gui3d.Direction
+import malefiz.model.fileIO.serializeJSON.serialize
 import util.UndoManager
 
 import scala.util.Random
@@ -97,7 +98,13 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
   def playerRotation(): Unit =
     currentPlayer = if (gameBoard.players.indexOf(currentPlayer) == gameBoard.players.length-1) gameBoard.players(0) else gameBoard.players(gameBoard.players.indexOf(currentPlayer)+1)
 
-  def loadSavedGame(): Unit = ???
+  def loadSavedGame(): Unit =
+    val writer = new serialize()
+    val controller  = writer.loads()
+    currentPlayer = controller.currentPlayer
+    gameBoard = controller.getBoard
+    println("load successful")
+    notifyObservers()
 
   def moveComplete(y: Int, x: Int): Unit =
     movePeg()
@@ -179,8 +186,10 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
   def redo(): Unit = undoManager.redoStep(this)
   
   def saveGame(): Unit =
-    val json = toJson
-    println(json)
+    val writer = new serialize()
+    writer.dumps(gameBoard, gameBoard.players.indexOf(currentPlayer))
+    println("save successful")
+    notifyObservers()
 
   def toJson: JsValue =
     Json.obj(
@@ -188,10 +197,9 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
       "currentPlayer" -> JsNumber(gameBoard.players.indexOf(currentPlayer)),
       "GameBoard" -> gameBoard.toJson
     )
-  def fromJson(js: JsValue): ControllerInterface =
-    val jsonGameboard = js \ "GameBoard"
-    gameBoard = gameBoard.fromJson(jsonGameboard.get)
-    currentPlayer = gameBoard.players((js \ "currentPlayer").get.toString.toInt)
+  def fromJson(js: JsValue, currentplayer: Int): ControllerInterface =
+    gameBoard = gameBoard.fromJson(js)
+    currentPlayer = gameBoard.players(currentplayer)
     this
 
 

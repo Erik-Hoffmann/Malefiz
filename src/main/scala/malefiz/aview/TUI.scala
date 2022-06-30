@@ -20,7 +20,7 @@ class TUI(controller: ControllerInterface) extends Observer:
     readLine(s"Please select an option:$eol(q)uit, (s)tart game, (l)oad$eol") match
       case "q" => System.exit(0)
       case "s" => controller.dice();printBoard();inputOption()
-      case "l" => ???
+      case "l" => controller.loadSavedGame(); controller.dice(); printBoard(); inputOption()
       case _ => startMenu()
 
   def inputOption(): Unit =

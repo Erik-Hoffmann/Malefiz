@@ -9,5 +9,8 @@ import scala.io.Source
 import controller.{Controller, ControllerInterface}
 
 class serialize extends fileIOInterface {
-  
+  override val extension: String = ".json"
+  override val fileName: String = baseName + extension
+  def dumps(gameBoard: GameBoardInterface, currentplayer: Int): Unit = ???
+  def loads(): ControllerInterface = ???
 }

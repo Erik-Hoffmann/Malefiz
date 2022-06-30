@@ -2,6 +2,7 @@ package malefiz
 
 import com.google.inject.{Guice, Injector}
 import malefiz.aview.TUI
+import malefiz.aview.gui3d.Gui3d
 import malefiz.controller.ControllerInterface
 import malefiz.controller.Controller
 
@@ -18,15 +19,15 @@ object Malefiz {
 //    lazy val board: GameBoardInterface = inject.getInstance(classOf[GameBoard])
 //    lazy val controller: ControllerInterface = inject.getInstance(classOf[Controller])
 //    lazy val tui = inject.getInstance(classOf[TUI])
-      val controller: ControllerInterface = Controller(players)
-      val tui = TUI(controller)
-
-//    lazy val gui = inject.getInstance(classOf[GUIStart])
-//    val threadGui = new Thread {
-//      override def run(): Unit = {
-//        gui.main(Array[String]())
-//      }
-//    }
-//    threadGui.start()
+    val controller: ControllerInterface = Controller(players)
+    val tui = TUI(controller)
+    //lazy val gui = inject.getInstance(classOf[GUIStart])
+    val gui = new Gui3d(controller)
+    val threadGui = new Thread {
+      override def run(): Unit = {
+        gui.main(Array[String]())
+      }
+    }
+    threadGui.start()
     tui.run()
 }

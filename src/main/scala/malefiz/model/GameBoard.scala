@@ -70,7 +70,21 @@ case class GameBoard(numPlayers: Int) extends GameBoardInterface(numPlayers):
     playersFromJson((js \ "players").get)
     this
 
-  def playersFromJson(value: JsValue): Unit = ???
+  def playersFromJson(value: JsValue): Unit =
+    var playerArray = value.as[JsArray]
+    for (p <- players)
+      for (pegs <- p.getPegs)
+        p.removePeg(pegs.x, pegs.y)
+    for (i <- 0 until players.length)
+      val coord = (playerArray(i) \ "pegs").as[JsArray].value
+      for (peg <- coord) {
+        val field = Field((peg \ "x").get.toString.toInt, (peg \ "y").get.toString.toInt, Peg(players(i).color))
+        players(i).pegs(players(i).getPegs.length) = field
+        board((peg \ "x").get.toString.toInt)((peg \ "y").get.toString.toInt) = field
+      }
+
+
+
 
   def boardFromJson(jsonBoard: JsValue): Unit =
     val arr = jsonBoard.as[Array[Array[String]]]
@@ -85,4 +99,4 @@ case class GameBoard(numPlayers: Int) extends GameBoardInterface(numPlayers):
       case "   " =>  EmptyGround(x,y)
       case " □ " => new Field(x,y,FreeField())
       case " ■ " => new Field(x,y,Blocker())
-      case _ => ???
+      case _ => new Field(x,y,FreeField())
