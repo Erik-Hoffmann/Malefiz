@@ -1,0 +1,216 @@
+<game>
+    <current> 0 </current>
+    <numplayers> 4 </numplayers>
+    <gameboard>
+        <field>
+            <Array>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> □ </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+            </Array>
+            <Array>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+            </Array>
+            <Array>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> □ </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> □ </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+            </Array>
+            <Array>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> ■ </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> ■ </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+            </Array>
+            <Array>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> □ </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> □ </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> □ </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+            </Array>
+            <Array>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> ■ </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> ■ </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> ■ </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> </ground>
+                <ground> </ground>
+            </Array>
+            <Array>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> □ </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> □ </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> □ </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> □ </ground>
+                <ground> </ground>
+                <ground> </ground>
+            </Array>
+            <Array>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> ■ </ground>
+                <ground> □ </ground>
+                <ground>[31m  [0m</ground>
+                <ground> □ </ground>
+                <ground> ■ </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> ■ </ground>
+                <ground>[33m  [0m</ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> ■ </ground>
+                <ground> □ </ground>
+                <ground>[34m  [0m</ground>
+            </Array>
+            <Array>
+                <ground> □ </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> □ </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground>[32m  [0m</ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> □ </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> </ground>
+                <ground> □ </ground>
+            </Array>
+            <Array>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+                <ground> □ </ground>
+            </Array>
+        </field>
+        <players>
+            <pegs>
+                <x>7</x>
+                <y>4</y>
+            </pegs>
+            <pegs>
+                <x>8</x>
+                <y>8</y>
+            </pegs>
+            <pegs>
+                <x>7</x>
+                <y>11</y>
+            </pegs>
+            <pegs>
+                <x>7</x>
+                <y>16</y>
+            </pegs>
+        </players>
+    </gameboard>
+</game>
