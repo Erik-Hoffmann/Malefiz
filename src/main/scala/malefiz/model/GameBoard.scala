@@ -108,7 +108,6 @@ case class GameBoard(numPlayers: Int) extends GameBoardInterface(numPlayers):
     for (i <- (node \\ "Array").indices)
       val subarr = (node \ "Array").apply(i)
       for (j <- (subarr \ "ground").indices)
-        println("" + (subarr \ "ground").apply(j) + " = " + i+":"+j)
         board(i)(j) = generateFromStringXML((subarr \ "ground").apply(j).head.text.trim, i, j)
 
   def generateFromStringXML(string: String, x: Int, y: Int): Ground =

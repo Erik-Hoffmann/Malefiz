@@ -294,22 +294,3 @@ class Gui3d(con : ControllerInterface) extends JFXApp3, Observer{
     }
   }
 }
-object Gui3d {
-  @main def main(): Unit = {
-    val con = new Controller(2)
-    val gui = new Gui3d(con)
-    val tui =new TUI(con)
-    val threadTUI = new Thread{
-      override def run(): Unit = {
-        tui.run()
-      }
-    }
-    val threadGui = new Thread {
-      override def run(): Unit = {
-        gui.main(Array[String]())
-      }
-    }
-    threadTUI.start()
-    threadGui.start()
-  }
-}
