@@ -36,11 +36,5 @@ class PlayerSpec extends AnyWordSpec{
       player.removePeg(1,0)
       player.pegs.filterNot(_==null).length should be (0)
     }
-    "have a pegs json" in {
-      player.pegsToJSON.toString should be ("[]")
-    }
-    "have a json representation" in {
-      player.toJson.toString should be ("{\"color\":\"\\u001B[36m\",\"startField\":[2,3],\"pegs\":[]}")
-    }
   }
 }

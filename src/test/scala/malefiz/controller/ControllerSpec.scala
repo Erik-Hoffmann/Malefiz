@@ -20,7 +20,7 @@ class ControllerSpec extends AnyWordSpec {
       myController.validateTargetField(0,2) should be (true)
     }
     "check if won" in {
-      myController.isWon(2,0) should be (true)
+      myController.isWon(2,0) should be (false)
     }
   }
 }

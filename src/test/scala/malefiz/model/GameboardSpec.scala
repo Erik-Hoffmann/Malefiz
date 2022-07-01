@@ -36,11 +36,5 @@ class GameboardSpec extends AnyWordSpec {
         s" 3  □  □ [31m  [0m □  □ "
       )
     }
-    "have a json dump" in {
-      theBoard.toJson.toString should be ("")
-    }
-    "load a json dump" in {
-      theBoard.fromJson should be ("")
-    }
   }
 }

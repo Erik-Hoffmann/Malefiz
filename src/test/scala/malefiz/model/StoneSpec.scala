@@ -5,7 +5,7 @@ import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
 
 class StoneSpec extends AnyWordSpec {
-    val stone = Stone("hehe")
+  val stone: Stone = Stone("hehe")
   "A Stone" should {
     "have a string representation" in {
       stone.toString should be ("hehe")
