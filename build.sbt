@@ -34,3 +34,8 @@ jacocoReportSettings := JacocoReportSettings(
   JacocoThresholds(),
   Seq(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML), // note XML formatter
   "utf-8")
+
+jacocoExcludes := Seq(
+  "malefiz.aview*",
+  "malefiz.model.fileIO*"
+)
