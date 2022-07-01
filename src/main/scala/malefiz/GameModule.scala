@@ -8,7 +8,7 @@ import model.fileIO.{ fileIOInterface, serializeJSON, serializeXML }
 
 class GameModule extends AbstractModule {
   override def configure(): Unit = {
-    bind(classOf[fileIOInterface]).to(classOf[serializeJSON.serialize])
-    //bind(classOf[fileIOInterface]).to(classOf[serializeXML.serialize])
+    //bind(classOf[fileIOInterface]).to(classOf[serializeJSON.serialize])
+    bind(classOf[fileIOInterface]).to(classOf[serializeXML.serialize])
   }
 }

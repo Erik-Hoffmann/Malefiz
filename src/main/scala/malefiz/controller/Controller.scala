@@ -11,6 +11,8 @@ import model.fileIO.fileIOInterface
 import model.{Empty, Field, FreeField, GameBoard, GameBoardInterface, Ground, Peg, Player}
 import play.api.libs.json.{JsNumber, JsValue, Json}
 
+import scala.xml.Node
+
 case class Controller(numPlayers: Int) extends ControllerInterface:
   
   var gameBoard: GameBoardInterface = GameBoard(numPlayers).buildGame
@@ -103,7 +105,6 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
     val controller  = serializer.loads()
     currentPlayer = controller.currentPlayer
     gameBoard = controller.getBoard
-    println("load successful")
     notifyObservers()
 
   def moveComplete(y: Int, x: Int): Unit =
@@ -177,7 +178,7 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
 
   def validateTargetField(y: Int, x: Int):Boolean = x>=0 && y>=0 && y<gameBoard.width && x<gameBoard.height && gameBoard.board(x)(y).isFree
   
-  def isWon(x: Int, y: Int): Boolean = y == 0 && x == gameBoard.width/2
+  def isWon(x: Int, y: Int): Boolean = x == 0 && y == gameBoard.width/2+1
   
   def dice(): Unit = diced = Random.nextInt(6)+1
   
@@ -188,14 +189,13 @@ case class Controller(numPlayers: Int) extends ControllerInterface:
   def saveGame(): Unit =
     serializer.dumps(gameBoard, gameBoard.players.indexOf(currentPlayer))
 
-  def toJson: JsValue =
-    Json.obj(
-      "numPlayers" -> JsNumber(numPlayers),
-      "currentPlayer" -> JsNumber(gameBoard.players.indexOf(currentPlayer)),
-      "GameBoard" -> gameBoard.toJson
-    )
   def fromJson(js: JsValue, currentplayer: Int): ControllerInterface =
     gameBoard = gameBoard.fromJson(js)
+    currentPlayer = gameBoard.players(currentplayer)
+    this
+
+  override def fromXML(node: Node, currentplayer: Int): ControllerInterface =
+    gameBoard = gameBoard.fromXML(node)
     currentPlayer = gameBoard.players(currentplayer)
     this
 
