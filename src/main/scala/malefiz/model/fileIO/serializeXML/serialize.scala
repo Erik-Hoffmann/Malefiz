@@ -17,77 +17,26 @@ class serialize extends fileIOInterface {
   val fileName: String = s"$baseName.$extension"
 
   override def loads(): ControllerInterface = {
-    val file = scala.xml.XML.loadFile("malefiz.xml")
-    val pegs = (file \\ "board" \\ "players" \\ "peg").text.strip
-    val grounds = (file \\ "board" \\ "field" \\ "ground").text
-    val current = (file \\ "board" \\ "current").text.strip.toInt
-    Controller(0)
+    val file = scala.xml.XML.loadFile(fileName)
+    val xml = (file \\ "game")
+    val con = Controller((xml \\ "numplayers").head.text.trim.toInt)
+    con.fromXML((xml \\ "gameboard").head,  (xml \ "current").head.text.trim.toInt)
   }
 
   override def dumps(board: GameBoardInterface, current: Int): Unit = {
-    val pw = new PrintWriter(new File("malefiz.xml"))
+    val pw = new PrintWriter(new File(fileName))
     val prettyPrinter = new PrettyPrinter(120, 4)
-
-    val xml = prettyPrinter.format(boardToXML(board, board.players, current))
-    pw.write(xml)
+    pw.write(prettyPrinter.format(serialize(board,  current)))
     pw.close
   }
-
-  def boardToXML(board: GameBoardInterface, players: Array[Player], current: Int) = {
-    <board>
-      <fields>
-        {
-        fieldToXML(board)
-        }
-      </fields>
-      <players>
-        {
-        playersToXML(players)
-        }
-      </players>
-      <playercount>
-        {
-        board.players.length
-        }
-      </playercount>
+  def serialize(gameBoard: GameBoardInterface, currentplayer: Int): Node =
+    <game>
       <current>
-        {
-        current
-        }
+        {currentplayer}
       </current>
-    </board>
-  }
-
-  def fieldToXML(board: GameBoardInterface) = {
-    {
-      for {
-        row <- board.board
-        col <- row
-      } yield groundToXML(col)
-    }
-  }
-
-  def groundToXML(ground: Ground) = {
-    <ground>
-      {
-      ground.toString
-      }
-    </ground>
-  }
-
-  def playersToXML(players: Array[Player]) = {
-    for {
-      x <- players
-      y <- x.pegs.filterNot(_ == null)
-    } yield pegsToXML(y)
-
-  }
-
-  def pegsToXML(field: Field) = {
-    <peg>
-      {
-      field.getCoords.toString()
-      }
-    </peg>
-  }
+      <numplayers>
+        {gameBoard.players.length}
+      </numplayers>
+        {gameBoard.toXML}
+    </game>
 }

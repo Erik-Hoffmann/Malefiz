@@ -26,26 +26,19 @@ class TUI(controller: ControllerInterface) extends Observer:
   def inputOption(): Unit =
     readLine(s"Please select an option:$eol(q)uit, do(t)urn, (u)ndo, (r)edo, (y)ield, (s)et a Peg, (save) game$eol") match
       case "q" => System.exit(0)
-      case "t" => if (controller.diced == 6 && controller.currentPlayer.pegs.length < controller.currentPlayer.numPegs && newPeg)controller.newPeg();controller.turn();inputTargetField();inputOption()
+      case "t" => if (controller.diced == 6 && controller.currentPlayer.pegs.length < controller.currentPlayer.numPegs )controller.newPeg();controller.turn();inputTargetField();inputOption()
       case "u" => controller.undo(); printBoard(); inputOption()
       case "r" => controller.redo(); printBoard(); inputOption()
       case "y" =>controller.state = State.MoveComplete; controller.inputExecute(0,0); inputOption()
       case "s" => controller.state = State.Set; inputOption()
+      case "p" => controller.getBoard.players.map(f=>f.getPegs.map(c=> println(c.getCoords)))
       case "save" => controller.saveGame(); inputOption()
-      case "m" =>controller.possibleMoves.foreach(println); inputOption()
-      case "p" => controller.getBoard.players.foreach(p => p.pegs.foreach(f =>if f == null then{} else println (f.getCoords))); inputOption()
       case _ => inputOption()
 
   def inputTargetField(): Unit =
     toIntTuple(readLine(s"<x,y>:$eol")) match
       case Success(t) => controller.inputExecute(t._1, t._2)
       case Failure(_) => println("Invalid input! Try again!"); inputTargetField()
-
-  def newPeg: Boolean =
-    readLine(s"Do you want a new Peg on the Field? <y,n>$eol") match
-      case "y" => true
-      case "n" => false
-      case _ => newPeg
   
   def toIntTuple(input: String): Try[(Int,Int)] =
       Try {input.replace(" ", "").split(",").map(i => i.toInt) match {case Array(x,y) => (x,y)}}
