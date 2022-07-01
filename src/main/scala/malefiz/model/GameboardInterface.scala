@@ -3,6 +3,8 @@ package model
 
 import play.api.libs.json.JsValue
 
+import scala.xml.Node
+
 
 trait GameBoardInterface(numPlayers: Int):
   val width: Int = numPlayers * 4 + 1
@@ -15,3 +17,5 @@ trait GameBoardInterface(numPlayers: Int):
   def toString: String
   def toJson: JsValue
   def fromJson(js: JsValue): GameBoardInterface
+  def toXML: Node
+  def fromXML(node: Node): GameBoardInterface

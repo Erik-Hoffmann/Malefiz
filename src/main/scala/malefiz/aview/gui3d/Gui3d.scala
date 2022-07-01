@@ -208,7 +208,7 @@ class Gui3d(con : ControllerInterface) extends JFXApp3, Observer{
       case State.ChooseDest => textContainer.text = "Please choose destination"
       case State.ChooseDestSuccess =>
       case State.MoveSuccess =>
-      case State.Win =>
+      case State.Win => textContainer.text =  "" + playerColors(con.currentPlayer.color) + "won the game!"
       case State.ChooseBlockerTarget => textContainer.text = "You need to move a Blocker, choose a destination!"
       case State.MoveComplete =>
   }
@@ -231,6 +231,16 @@ class Gui3d(con : ControllerInterface) extends JFXApp3, Observer{
       case Colors.yellow => Yellow
       case Colors.default => Black
     }
+  }
+  def playerColors(c: Colors): String = {
+    c match
+      case Colors.red => "Red"
+      case Colors.blue => "Blue"
+      case Colors.magenta => "Magenta"
+      case Colors.cyan => "Cyan"
+      case Colors.green => "Green"
+      case Colors.yellow => "Yellow"
+      case Colors.default => "Black"
   }
 
   class BoardCylinder(x: Int, y: Int) extends Cylinder {
@@ -282,24 +292,5 @@ class Gui3d(con : ControllerInterface) extends JFXApp3, Observer{
     def addField(field: BoardCylinder): Unit = {
       walkableFields = walkableFields :+ field
     }
-  }
-}
-object Gui3d {
-  @main def main(): Unit = {
-    val con = new Controller(4)
-    val gui = new Gui3d(con)
-    val tui =new TUI(con)
-    val threadTUI = new Thread{
-      override def run(): Unit = {
-        tui.run()
-      }
-    }
-    val threadGui = new Thread {
-      override def run(): Unit = {
-        gui.main(Array[String]())
-      }
-    }
-    threadTUI.start()
-    threadGui.start()
   }
 }

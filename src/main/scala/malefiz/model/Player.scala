@@ -5,6 +5,7 @@ import Colors.default
 import play.api.libs.json.{JsArray, JsNumber, JsValue, Json}
 
 import java.awt.Color
+import scala.xml.Node
 
 case class Player(color: Colors, startField: (Int, Int)):
   val numPegs: Int = 5
@@ -30,3 +31,5 @@ case class Player(color: Colors, startField: (Int, Int)):
         )
     }
     jsArray
+  def toXML:Node =
+    <pegs>{getPegs.map(f => <x>{f.x}</x> <y>{f.y}</y>)}</pegs>

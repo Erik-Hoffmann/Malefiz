@@ -6,6 +6,8 @@ import util.Observable
 import model.{Field, GameBoardInterface, Player}
 import play.api.libs.json.JsValue
 
+import scala.xml.Node
+
 trait ControllerInterface extends Observable:
   var currentPlayer: Player
   var state: State = State.ChoosePeg
@@ -27,5 +29,5 @@ trait ControllerInterface extends Observable:
   def playerRotation(): Unit
   def isWon(x: Int, y: Int): Boolean
   def newPeg(): Unit
-  def toJson: JsValue
   def fromJson(js: JsValue, currentplayer:Int): ControllerInterface
+  def fromXML(node :Node, currentplayer: Int): ControllerInterface

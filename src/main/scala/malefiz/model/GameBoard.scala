@@ -4,6 +4,7 @@ package model
 import play.api.libs.json.{JsArray, JsValue, Json}
 
 import java.awt.Color
+import scala.xml.{Node, NodeSeq}
 
 case class GameBoard(numPlayers: Int) extends GameBoardInterface(numPlayers):
   val eol: String = sys.props("line.separator")
@@ -83,9 +84,6 @@ case class GameBoard(numPlayers: Int) extends GameBoardInterface(numPlayers):
         board((peg \ "x").get.toString.toInt)((peg \ "y").get.toString.toInt) = field
       }
 
-
-
-
   def boardFromJson(jsonBoard: JsValue): Unit =
     val arr = jsonBoard.as[Array[Array[String]]]
     for (i <- arr.indices) {
@@ -100,3 +98,48 @@ case class GameBoard(numPlayers: Int) extends GameBoardInterface(numPlayers):
       case " □ " => new Field(x,y,FreeField())
       case " ■ " => new Field(x,y,Blocker())
       case _ => new Field(x,y,FreeField())
+
+  override def fromXML(node: Node): GameBoardInterface =
+    boardFromXML((node \\ "field").head)
+    playersFromXML((node \\ "players").head)
+    this
+
+  def boardFromXML(node: NodeSeq): Unit =
+    for (i <- (node \\ "Array").indices)
+      val subarr = (node \ "Array").apply(i)
+      for (j <- (subarr \ "ground").indices)
+        board(i)(j) = generateFromStringXML((subarr \ "ground").apply(j).head.text.trim, i, j)
+
+  def generateFromStringXML(string: String, x: Int, y: Int): Ground =
+    string match
+      case "" =>  EmptyGround(x,y)
+      case "□" => new Field(x,y,FreeField())
+      case "■" => new Field(x,y,Blocker())
+      case _ => new Field(x,y,FreeField())
+
+  def playersFromXML(node: NodeSeq): Unit =
+    for (p <- players)
+      for (pegs <- p.getPegs)
+        p.removePeg(pegs.x, pegs.y)
+    for (i <- 0 until players.length)
+      val coord = (node \ "pegs").apply(i)
+      for (peg <- coord)
+        val field = Field((peg \ "x").head.text.trim.toInt, (peg \ "y").head.text.trim.toInt, Peg(players(i).color))
+        players(i).pegs(players(i).getPegs.length) = field
+        board((peg \ "x").head.text.trim.toInt)((peg \ "y").head.text.trim.toInt) = field
+
+
+  override def toXML: Node =
+    <gameboard>
+      {fieldToXML}
+      {playersToXML}
+    </gameboard>
+
+  def playersToXML:Node =
+    <players>{players.map(p => p.toXML)}</players>
+
+  def fieldToXML: Node =
+    <field>{board.map(subarr => subArrToXML(subarr))}</field>
+
+  def subArrToXML(arr :Array[Ground]): Node =
+   <Array> {arr.map(ground => <ground>{ground.toString}</ground>)}</Array>
