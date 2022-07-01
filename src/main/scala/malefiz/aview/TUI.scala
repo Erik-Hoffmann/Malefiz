@@ -31,7 +31,6 @@ class TUI(controller: ControllerInterface) extends Observer:
       case "r" => controller.redo(); printBoard(); inputOption()
       case "y" =>controller.state = State.MoveComplete; controller.inputExecute(0,0); inputOption()
       case "s" => controller.state = State.Set; inputOption()
-      case "p" => controller.getBoard.players.map(f=>f.getPegs.map(c=> println(c.getCoords)))
       case "save" => controller.saveGame(); inputOption()
       case _ => inputOption()
 
